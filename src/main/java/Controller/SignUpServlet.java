@@ -48,7 +48,7 @@ public class SignUpServlet extends HttpServlet {
 			ResultSet resultSet = statement.executeQuery(searchUsersql);
 			
 			
-			List errList = new LinkedList<String>();
+			List<String> errList = new LinkedList<String>();
 			
 			if(email.equals(""))
 			{
@@ -77,6 +77,7 @@ public class SignUpServlet extends HttpServlet {
 				request.setAttribute("errlist", errList);
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.jsp");
 				requestDispatcher.forward(request, response);
+				connection.close();
 				return;
 			}
 		
@@ -85,11 +86,9 @@ public class SignUpServlet extends HttpServlet {
 					+ "VALUES(" + email + "," + displayName + "," + password + ");";
 			statement.executeUpdate(signupUser);
 			
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.html");
-			requestDispatcher.include(request, response);
-			
-			
-			
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
+			requestDispatcher.forward(request, response);
+
 			connection.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

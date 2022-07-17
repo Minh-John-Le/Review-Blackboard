@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -23,10 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 public class LogInServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	ServletContext context;
-	
+
 	public void init(ServletConfig config)
 	{		
-			
+
 		context = config.getServletContext();		
 	}
 	/**
@@ -43,29 +45,43 @@ public class LogInServlet extends HttpServlet {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			
-			
-			
+
+
+
 			Statement statement = connection.createStatement();
 			String searchUsersql = "SELECT * "
 					+ "FROM Student_User "
 					+ "WHERE email = '" + email + "' and password ='" + password +"'"
 					+";";
-					
-			
+
+
 			ResultSet resultSet = statement.executeQuery(searchUsersql);
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homeServlet");
+			List<String> errList = new LinkedList<String>();
 			
-			if (resultSet.next()) {
+			
+			if (!resultSet.next()) 
+			{
+				errList.add("Username or Password is inccorect!");
+			} 
+			
+			
+			if(!errList.isEmpty()) // no error prceed to home page
+			{
+				request.setAttribute("errlist", errList);
+				requestDispatcher = request.getRequestDispatcher("login.jsp");
+				requestDispatcher.include(request, response);
+				connection.close();
+				return;
+			}
+				
+			else
+			{
 				request.setAttribute("message", "Welcome to Interservlet Communication " + email);
 				requestDispatcher.forward(request, response);
-			} else {
-				requestDispatcher = request.getRequestDispatcher("login.html");
-				requestDispatcher.include(request, response);
+				connection.close();
 			}
 			
-			
-			connection.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
