@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -40,24 +42,52 @@ public class SignUpServlet extends HttpServlet {
 			Statement statement = connection.createStatement();
 			String searchUsersql = "SELECT * "
 					+ "FROM Student_User "
-					+ "WHERE email = '" + email + "' and password ='" + password +"'"
-					+";";
+					+ "WHERE email = '" + email + "'" +";";
 					
 			
 			ResultSet resultSet = statement.executeQuery(searchUsersql);
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.html");
 			
-			if (resultSet.next()) {
-				//request.setAttribute("message", "Welcome to Interservlet Communication " + email);
-				requestDispatcher.forward(request, response);
-			} else {
-				String signupUser = "INSERT INTO STUDENT_USER "
-						+ "VALUES(" + email + "," + displayName + "," + password + ");";
-				statement.executeUpdate(signupUser);
-				
-				requestDispatcher = request.getRequestDispatcher("login.html");
-				requestDispatcher.include(request, response);
+			
+			List errList = new LinkedList<String>();
+			
+			if(email.equals(""))
+			{
+				errList.add("Email cannot be empty!");
 			}
+			
+			if(password.equals(""))
+			{
+				errList.add("Password cannot be empty!");
+			}
+			
+			
+			if(displayName.equals(""))
+			{
+				errList.add("Display name cannot be empty!");
+			}
+			
+			
+			if(resultSet.next())
+			{
+				errList.add("Username already exist!");
+			}
+			
+			if(!errList.isEmpty()) { //has some error
+				
+				request.setAttribute("errlist", errList);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.jsp");
+				requestDispatcher.forward(request, response);
+				return;
+			}
+		
+			//  Happy Flow success create new user
+			String signupUser = "INSERT INTO STUDENT_USER "
+					+ "VALUES(" + email + "," + displayName + "," + password + ");";
+			statement.executeUpdate(signupUser);
+			
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.html");
+			requestDispatcher.include(request, response);
+			
 			
 			
 			connection.close();
@@ -68,6 +98,7 @@ public class SignUpServlet extends HttpServlet {
 		
 		}
 	}
+	
 
 
 }

@@ -1,3 +1,5 @@
+<%@page import = "java.util.List" %>
+<%@page import = "java.util.Iterator" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,10 +54,23 @@
       <div>
         <input type="submit" value="Submit">
       </div>
-
     </form>
   </div>
-
-  <script src="app.js"></script>
+  
+  <%
+      	List errList = (List) request.getAttribute("errlist");      		
+      	if(errList != null)
+      	{
+      		for(Iterator it = errList.iterator(); it.hasNext();)
+      		{
+      			String error = (String) it.next();
+      			%>
+      			<font color ="red">
+      			<li> <%=error%> </li>
+      			</font>
+      			<%
+      		}
+      	}
+      %>
 </body>
 </html>
