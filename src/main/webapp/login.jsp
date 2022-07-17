@@ -40,7 +40,8 @@
       </div>
 
       <div>
-        <input type="submit" value = "submit">
+        <input type="submit" value="Log In" name = "Button">
+        <input type="submit" value="Sign Up" name = "Button">
       </div>
       
 	<%

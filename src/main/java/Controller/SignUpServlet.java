@@ -35,6 +35,17 @@ public class SignUpServlet extends HttpServlet {
 		
 
 		try {
+			
+			String clickButton = request.getParameter("Button");
+			
+			// Return to Log In page if click cancel
+			if(clickButton.equals("Cancel"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));

@@ -52,8 +52,10 @@
       </div>
 
       <div>
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" name = "Button">
+        <input type="submit" value="Cancel" name = "Button">
       </div>
+      
     </form>
   </div>
   

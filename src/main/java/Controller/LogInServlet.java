@@ -37,11 +37,23 @@ public class LogInServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
 			IOException {
+		
+		String clickButton = request.getParameter("Button");
+		
+		// Go to Sign up page when click "Sign Up"
+		if(clickButton.equals("Sign Up"))
+		{
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.jsp");
+			requestDispatcher.forward(request, response);
+			return;
+		}
 
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
 		try {
+			
+			
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
