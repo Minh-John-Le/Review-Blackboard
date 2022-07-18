@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class LoginServlet
@@ -39,6 +40,9 @@ public class LogInServlet extends HttpServlet {
 			IOException {
 		
 		String clickButton = request.getParameter("Button");
+		
+		HttpSession session = request.getSession();
+		System.out.println("Log In email =" + session.getAttribute("email"));
 		
 		// Go to Sign up page when click "Sign Up"
 		if(clickButton.equals("Sign Up"))
@@ -89,7 +93,7 @@ public class LogInServlet extends HttpServlet {
 				
 			else
 			{
-				request.setAttribute("message", "Welcome to Interservlet Communication " + email);
+				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
 				requestDispatcher.forward(request, response);
 				connection.close();
 			}

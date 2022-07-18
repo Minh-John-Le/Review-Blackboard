@@ -13,14 +13,17 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet("/signUpServlet")
 public class SignUpServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+
 	ServletContext context;
 	
 	public void init(ServletConfig config)
@@ -33,7 +36,10 @@ public class SignUpServlet extends HttpServlet {
 		String displayName = request.getParameter("displayName");
 		String password = request.getParameter("password");
 		
-
+		HttpSession session = request.getSession();
+		session.setAttribute("email", email);
+		
+		System.out.println("Sign up email = " + session.getAttribute("email"));
 		try {
 			
 			String clickButton = request.getParameter("Button");
@@ -98,8 +104,11 @@ public class SignUpServlet extends HttpServlet {
 			statement.executeUpdate(signupUser);
 			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
+			
+			
 			requestDispatcher.forward(request, response);
-
+			
+			
 			connection.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

@@ -53,6 +53,19 @@ public class PreInitServlet extends HttpServlet {
 						+ ");";
 				statement.executeUpdate(usertableDDL);
 				
+				
+				String reviewDDL = " CREATE TABLE IF NOT EXISTS REVIEWS("
+						+ "Student VARCHAR(50) NOT NULL,"
+						+ "Quality Integer NOT NULL,"
+						+ "Difficulty Integer NOT NULL,"
+						+ "CourseName VARCHAR(50) NOT NULL,"
+						+ "Professor VARCHAR(50) NOT NULL,"
+						+ "School VARCHAR(50) NOT NULL,"
+						+ "Zip Integer NOT NULL,"
+						+ "Content VARCHAR(1000) NOT NULL"
+						+ ");";
+				statement.executeUpdate(reviewDDL);
+				
 				connection.close();
 				
 				
