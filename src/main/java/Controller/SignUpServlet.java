@@ -94,7 +94,7 @@ public class SignUpServlet extends HttpServlet {
 		
 			//  Happy Flow success create new user
 			String signupUser = "INSERT INTO STUDENT_USER "
-					+ "VALUES(" + email + "," + displayName + "," + password + ");";
+					+ "VALUES('" + email + "','" + displayName + "','" + password + "');";
 			statement.executeUpdate(signupUser);
 			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
