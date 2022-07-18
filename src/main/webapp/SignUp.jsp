@@ -22,7 +22,7 @@
       background: red;
     }
   </style>
-  <title>Blackboard Review</title>
+  <title>Review Blackboard</title>
 </head>
 <body>
   <div class="container">

@@ -27,21 +27,26 @@
 </head>
 <body>
   <div class="container">
-    <h1>Log In</h1>
-    <form id="Sign-up-form" action = "loginServlet" method="post">
+    <h1>Review Blackboard</h1>
+    <form id="Sign-up-form" action = "homeServlet" method="post">
       <div>
-        <label for="email">Email</label>
-        <input type="text" name="email" class="u-full-width">
+        <label for="Professor">Professor</label>
+        <input type="text" name="professor" class="u-full-width">
       </div>
       
       <div>
-        <label for="password">Password</label>
-        <input type="text" name="password" class="u-full-width">
+        <label for="School">School</label>
+        <input type="text" name="school" class="u-full-width">
+      </div>
+      
+      <div>
+        <label for="School Zip">School Zip</label>
+        <input type="text" name="zip" class="u-full-width">
       </div>
 
       <div>
-        <input type="submit" value="Log In" name = "Button">
-        <input type="submit" value="Sign Up" name = "Button">
+        <input type="submit" value="Search School" name = "Button">
+        <input type="submit" value="Search Professor" name = "Button">
       </div>
       
 	<%
