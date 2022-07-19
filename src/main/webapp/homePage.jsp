@@ -22,6 +22,8 @@
     .error {
       background: red;
     }
+    
+    
   </style>
   <title>Review Blackboard</title>
 </head>
@@ -49,21 +51,6 @@
         <input type="submit" value="Search Professor" name = "Button">
       </div>
       
-	<%
-      	List errList = (List) request.getAttribute("errlist");      		
-      	if(errList != null)
-      	{
-      		for(Iterator it = errList.iterator(); it.hasNext();)
-      		{
-      			String error = (String) it.next();
-      			%>
-      			<font color ="red">
-      			<li> <%=error%> </li>
-      			</font>
-      			<%
-      		}
-      	}
-      %>
     </form>
   </div>
 

@@ -45,26 +45,147 @@ public class PreInitServlet extends HttpServlet {
 						context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 				
 				statement = connection.createStatement();
-				String usertableDDL = "CREATE TABLE IF NOT EXISTS STUDENT_USER("
-						+ "Email VARCHAR(50) NOT NULL,"
-						+ "DisplayName VARCHAR(50) NOT NULL,"
-						+ "Password VARCHAR(50) NOT NULL,"
-						+ "PRIMARY KEY(Email)"
+				String usertableDDL = "Create Table If Not Exists Student(\r\n"
+						+ "user_id int AUTO_INCREMENT,\r\n"
+						+ "password varchar(20) not null,\r\n"
+						+ "email varchar(30) not null unique,\r\n"
+						+ "fname varchar(30),\r\n"
+						+ "lname varchar(30),\r\n"
+						+ "major varchar(30),\r\n"
+						+ "Primary key(user_id)\r\n"
 						+ ");";
 				statement.executeUpdate(usertableDDL);
 				
 				
-				String reviewDDL = " CREATE TABLE IF NOT EXISTS REVIEWS("
-						+ "Student VARCHAR(50) NOT NULL,"
-						+ "Quality Integer NOT NULL,"
-						+ "Difficulty Integer NOT NULL,"
-						+ "CourseName VARCHAR(50) NOT NULL,"
-						+ "Professor VARCHAR(50) NOT NULL,"
-						+ "School VARCHAR(50) NOT NULL,"
-						+ "Zip Integer NOT NULL,"
-						+ "Content VARCHAR(1000) NOT NULL"
+				
+				
+				String SchoolDDL = " Create Table If Not Exists School(\r\n"
+						+ "school_id int AUTO_INCREMENT,\r\n"
+						+ "sname varchar(100) not null unique,\r\n"
+						+ "street varchar(10),\r\n"
+						+ "city varchar(50),\r\n"
+						+ "state char(2),\r\n"
+						+ "zipcode char(5),\r\n"
+						+ "Primary key(school_id)\r\n"
 						+ ");";
-				statement.executeUpdate(reviewDDL);
+				statement.executeUpdate(SchoolDDL);
+				
+				
+				String professorDDL = "Create Table If Not Exists Professor(\r\n"
+						+ "user_id int AUTO_INCREMENT,\r\n"
+						+ "pw varchar(20) not null,\r\n"
+						+ "email varchar(30) not null unique,\r\n"
+						+ "fname varchar(30),\r\n"
+						+ "lname varchar(30),\r\n"
+						+ "school_id int NOT NULL,\r\n"
+						+ "department varchar(30),\r\n"
+						+ "Foreign Key(school_id) REFERENCES School(school_id) on delete cascade on update cascade,\r\n"
+						+ "Primary key(user_id)\r\n"
+						+ ");;";
+				statement.executeUpdate(professorDDL);
+				
+				String Prof_ReviewsDDL = " Create Table If Not Exists Prof_Reviews(\r\n"
+						+ "prid int AUTO_INCREMENT,\r\n"
+						+ "pub_date date not null,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "author int not null,\r\n"
+						+ "prof int not null,\r\n"
+						+ "quality int,\r\n"
+						+ "difficulty int,\r\n"
+						+ "course_name varchar(30),\r\n"
+						+ "class_type varchar(30),\r\n"
+						+ "grade varchar(50),\r\n"
+						+ "Pyear char(4),\r\n"
+						+ "semester varchar(30),\r\n"
+						+ "Primary key(prid),\r\n"
+						+ "Foreign key(author) References Student(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(prof) References Professor(user_id) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(Prof_ReviewsDDL);
+				
+				
+				String School_ReviewsDDL = " Create Table If not Exists School_Reviews(\r\n"
+						+ "scrid int AUTO_INCREMENT,\r\n"
+						+ "pub_date date not null,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "author int not null,\r\n"
+						+ "school_id int not null,\r\n"
+						+ "location int,\r\n"
+						+ "safety int,\r\n"
+						+ "quality int,\r\n"
+						+ "from_year char(4),\r\n"
+						+ "to_year char(4),\r\n"
+						+ "infrastructure int,\r\n"
+						+ "Primary key(scrid),\r\n"
+						+ "Foreign key(author) References Student(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(school_id) References School(school_id) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(School_ReviewsDDL);
+				
+				
+				String Comm_Prof_RevDDL = " Create Table If Not Exists Comm_Prof_Rev(\r\n"
+						+ "prid int,\r\n"
+						+ "professor int not null,\r\n"
+						+ "pub_date date,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "primary key(professor, prid),\r\n"
+						+ "Foreign key(professor) References Professor(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(prid) References Prof_Reviews(prid) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(Comm_Prof_RevDDL);
+				
+				
+				String Comm_School_RevDDL = " Create Table If Not Exists Comm_School_Rev(\r\n"
+						+ "scrid int,\r\n"
+						+ "professor int,\r\n"
+						+ "pub_date date,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "primary key(professor , scrid),\r\n"
+						+ "Foreign key(professor) References Professor(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(scrid) References School_Reviews(scrid) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(Comm_School_RevDDL);
+				
+				
+				String Prof_Flags_ScrevDDL = "Create Table If Not Exists Prof_Flags_Screv(\r\n"
+						+ "reportID int AUTO_INCREMENT,\r\n"
+						+ "pid int,\r\n"
+						+ "scrid int,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "report_date Date,\r\n"
+						+ "primary key(ReportID),\r\n"
+						+ "Foreign key(pid) References Professor(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(scrid) References School_Reviews(scrid) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(Prof_Flags_ScrevDDL);
+				
+				
+				
+				String Stud_Flags_ScrevDDL = "Create Table If Not Exists Stud_Flags_Screv(\r\n"
+						+ "reportID int AUTO_INCREMENT,\r\n"
+						+ "sid int,\r\n"
+						+ "scrid int,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "report_date Date,\r\n"
+						+ "primary key(ReportID),\r\n"
+						+ "Foreign key(sid) References Student(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(scrid) References School_Reviews(scrid) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(Stud_Flags_ScrevDDL);
+				
+				
+				String Stud_Reports_PrevDDL = "Create Table If Not Exists Stud_Reports_Prev(\r\n"
+						+ "reportID int AUTO_INCREMENT,\r\n"
+						+ "sid int,\r\n"
+						+ "prid int,\r\n"
+						+ "text_cont varchar(500),\r\n"
+						+ "report_date Date,\r\n"
+						+ "primary key(reportId),\r\n"
+						+ "Foreign key(sid) References Student(user_id) on delete cascade on update cascade,\r\n"
+						+ "Foreign key(prid) References Prof_Reviews(prid) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(Stud_Reports_PrevDDL);
+				
 				
 				connection.close();
 				

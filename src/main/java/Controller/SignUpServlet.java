@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 @WebServlet("/signUpServlet")
 public class SignUpServlet extends HttpServlet {
@@ -35,15 +36,23 @@ public class SignUpServlet extends HttpServlet {
 		String email = request.getParameter("email");
 		String displayName = request.getParameter("displayName");
 		String password = request.getParameter("password");
+		String role = request.getParameter("rolelist");
 		
+		//===================
 		HttpSession session = request.getSession();
 		session.setAttribute("email", email);
+		//System.out.println("Sign up email = " + session.getAttribute("email"));
+		//System.out.println(role);
 		
-		System.out.println("Sign up email = " + session.getAttribute("email"));
+		//===================
+		
+		
 		try {
 			
-			String clickButton = request.getParameter("Button");
 			
+			String clickButton = request.getParameter("Button");
+		
+		
 			// Return to Log In page if click cancel
 			if(clickButton.equals("Cancel"))
 			{
@@ -58,7 +67,7 @@ public class SignUpServlet extends HttpServlet {
 				
 			Statement statement = connection.createStatement();
 			String searchUsersql = "SELECT * "
-					+ "FROM Student_User "
+					+ "FROM Student "
 					+ "WHERE email = '" + email + "'" +";";
 					
 			
@@ -99,8 +108,8 @@ public class SignUpServlet extends HttpServlet {
 			}
 		
 			//  Happy Flow success create new user
-			String signupUser = "INSERT INTO STUDENT_USER "
-					+ "VALUES('" + email + "','" + displayName + "','" + password + "');";
+			String signupUser = "INSERT INTO STUDENT (password, email, fname)"
+					+ "VALUES('" + password + "','" + email + "','" + displayName + "');";
 			statement.executeUpdate(signupUser);
 			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");

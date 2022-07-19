@@ -44,7 +44,7 @@
       </div>
 
       <div>
-        <select id = "roleList"  >  
+        <select id = "roleList" name = "rolelist" >  
           <option> ---Choose role--- </option>  
           <option> Student </option>  
           <option> Professor </option>       
@@ -52,8 +52,8 @@
       </div>
 
       <div>
-        <input type="submit" value="Submit" name = "Button">
-        <input type="submit" value="Cancel" name = "Button">
+        <input type="submit" value="Submit" name = "Button" >
+        <input type="submit" value="Cancel" name = "Button" >
       </div>
       
     </form>
