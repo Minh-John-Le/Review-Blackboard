@@ -18,6 +18,11 @@
 	  margin-left: 20px;
 	  padding: 20px;
 	}
+	
+	.comment {
+	  margin-left: 40px;
+	  padding: 20px;
+	}
 
 	.tab 
 	{
@@ -132,6 +137,7 @@
       			String semester = review.getSemester();
       			String classType = review.getClass_type();
       			String content = review.getContent();
+      			String comment = review.getComment();
       			String report = "report" + id;
       			
       			%>
@@ -156,45 +162,35 @@
 			  	<%=content%>
 			  	</blockquote>
 			  	
+			  	
+			  	
 			  	<div align="right">
-			       	<input type="submit" value= <%= report%> name = <%= report%>>
+			       	<input type="submit" value= "Report" name = <%= report%>>
 			    </div>
-			    <hr>
+			   
   
   				</div>
+  				
+  				<% 
+			  		if(!comment.equals(""))
+			  		{
+			  			
+			  	%>
+			  	<div>
+			  		<b>Professor Reply: </b>
+			  	</div>
+					  	<blockquote class = "comment">
+					  	<%=comment%>
+					  	</blockquote>
+			  	<%
+			  		}
+			  	%>
+			  	 <hr>
       			<%
       		}
       	}
       %>
-   <div> 
-   	<span> <b>Quality: </b> 5   </span>
 
-   	<span class = "tab"> <b>Difficulty: </b> 5 </span>
-   	
-   	<span class = "tab"> <b>Course: </b> CS157A </span>
-   	
-   	<span class = "tab"> <b>Grade: </b> Not Sure Yet </span>
-   	
-   	<span class = "tab"> <b>Year: </b> 2022 </span>
-	
-   	<span class = "tab"> <b>Quarter/Semester: </b> Summer </span>
-   	<br></br>
-   	<span> <b>Class Style: </b> Online </span>
-   	
-   	
-   	
-  	<blockquote class = "review">
-  
-  	Lectures are amazing. He always pauses for questions. He goes through the code examples in detail which are helpful. The exercises are well structured and serve as a tutorial to apply the concepts we learned in class. He is very responsive to email and questions and holds extra office hours frequently to help students who are stuck in assignments.You don't know there's a quiz unless you check canvas-- they are posted and due day of. I missed several quizzes because of this and my work schedule. I was never allowed to make it up, being blamed for not checking. He is incredibly unsympathetic towards students who work. Rude in emails.
-  	</blockquote>
-  	
-  	<div align="right">
-       	<input type="submit" value="Report" name = "Button">
-    </div>
-    
-  <hr>
-  
-  </div>
    	</form>
    </div>
 </body>

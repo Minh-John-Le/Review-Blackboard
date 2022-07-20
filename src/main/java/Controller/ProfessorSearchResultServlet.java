@@ -39,10 +39,21 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		// Get all parameter
 		String clickButton = request.getParameter("Button");
 		HttpSession session = request.getSession();
-		String selectedProfessor = "";
 		
 		LinkedList<Professor> professorList = (LinkedList<Professor>) (session.getAttribute("searchProfessorList"));
 		int index = 0;
+		
+		
+		if (clickButton != null)
+		{
+			// if click a button then process
+			if (clickButton.equals("Home"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+		}
 		
 		
 		// Check is user click any view button
@@ -95,14 +106,16 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			Statement statement = connection.createStatement();
-			String searchUsersql = "\r\n"
-					+ "SELECT distinct *\r\n"
-					+ "FROM Prof_Reviews PR\r\n"
-					+ "WHERE PR.prof = '" + professorID +"'\r\n"
+			String searchProfessorReviewsql = "SELECT distinct *\r\n"
+					+ "FROM Prof_Reviews PR, Comm_prof_rev C\r\n"
+					+ "WHERE PR.prof = '" + professorID + "' "
+					+ "AND PR.prid = C.prid\r\n"
 					+ "ORDER BY PR.pub_date;";
 
 
-			ResultSet searchResult = statement.executeQuery(searchUsersql);
+			ResultSet searchResult = statement.executeQuery(searchProfessorReviewsql);
+			
+		
 			
 			while(searchResult.next())
 			{
@@ -116,8 +129,15 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 				String grade = searchResult.getString("grade");
 				String year = searchResult.getString("Pyear");
 				String semester = searchResult.getString("semester");
+				String comment = searchResult.getString("C.text_cont");
 				
-				ProfessorReview review = new ProfessorReview(reviewIDString, contentString, profID, quality, difficulty, course_name, class_type,grade, year, semester);
+				if (comment == null)
+				{
+					comment = "";
+				}
+				
+				ProfessorReview review = new ProfessorReview(reviewIDString, contentString, profID, quality, difficulty, course_name, 
+						class_type,grade, year, semester,comment);
 				reviewList.add(review);
 			}
 			

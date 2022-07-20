@@ -13,10 +13,11 @@ public class ProfessorReview {
 	 private String grade = "";
 	 private String year = "";
 	 private String semester = "";
+	 private String comment = "";
 	 
 	 
 	public ProfessorReview(int reviewID, String content, int professorID, int quality, int difficulty,
-				String courseName, String class_type, String grade, String year, String semester)
+				String courseName, String class_type, String grade, String year, String semester, String comment)
 	{
 		this.reviewId = reviewID;
 		this.content = content;
@@ -28,6 +29,7 @@ public class ProfessorReview {
 		this.grade = grade;
 		this.year = year;
 		this.semester = semester;
+		this.comment = comment;
 	}
 	
 	
@@ -102,6 +104,16 @@ public class ProfessorReview {
 	}
 	public void setSemester(String semester) {
 		this.semester = semester;
+	}
+
+
+	public String getComment() {
+		return comment;
+	}
+
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	 
 	 

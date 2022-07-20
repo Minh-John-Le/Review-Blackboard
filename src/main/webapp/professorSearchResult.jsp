@@ -25,6 +25,12 @@
       background: red;
     }
     
+    .tab 
+	{
+		display: inline-block;
+		margin-left: 40px;
+	}
+    
     
   </style>
   <title>Review Blackboard</title>
@@ -33,6 +39,9 @@
   <div class="container">
     <h1>Professor Search Result</h1>
     <form id="Sign-up-form" action = "professorSearchResultServlet" method="post">
+      <div>
+        <input type="submit" value="Home" name = "Button">
+      </div>
       <table>
   		<tr>
     		<th> Name </th>
@@ -65,9 +74,7 @@
       	}
       	%>
   	</table>
-      <div>
-        <input type="submit" value="Back" name = "Button">
-      </div>
+      
       
     </form>
   </div>

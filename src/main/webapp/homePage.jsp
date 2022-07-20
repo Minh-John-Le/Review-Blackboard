@@ -23,6 +23,11 @@
       background: red;
     }
     
+    .tab 
+	{
+		display: inline-block;
+		margin-left: 40px;
+	}
     
   </style>
   <title>Review Blackboard</title>
@@ -47,8 +52,8 @@
       </div>
 
       <div>
-        <input type="submit" value="Search School" name = "Button">
         <input type="submit" value="Search Professor" name = "Button">
+        <input class = "tab" type="submit" value="Search School" name = "Button">
       </div>
       
     </form>
