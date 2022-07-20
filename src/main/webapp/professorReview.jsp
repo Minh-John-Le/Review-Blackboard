@@ -1,5 +1,8 @@
 <%@page import = "java.util.List" %>
 <%@page import = "java.util.Iterator" %>
+<%@page import = "java.util.ArrayList" %>
+<%@page import = "Beans.ProfessorReview" %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -113,7 +116,56 @@
       
       <hr>
 <!-- Review display block-->  
-
+	<%
+      	ArrayList<ProfessorReview> reviewList = (ArrayList<ProfessorReview>) (session.getAttribute("professorReview"));      		
+      	if(reviewList != null)
+      	{
+      		for (int i = 0; i < reviewList.size(); i++)
+      		{
+      			ProfessorReview review = reviewList.get(i);
+      			String id = String.valueOf(review.getReviewId());
+      			String difficulty = String.valueOf(review.getDifficulty());
+      			String quality = String.valueOf(review.getQuality());
+      			String course = review.getCourseName();
+      			String grade = review.getGrade();
+      			String year = review.getYear();
+      			String semester = review.getSemester();
+      			String classType = review.getClass_type();
+      			String content = review.getContent();
+      			String report = "report" + id;
+      			
+      			%>
+      			<div> 
+			   	<span> <b>Quality: </b> <%= quality%>  </span>
+			
+			   	<span class = "tab"> <b>Difficulty: </b> <%= difficulty%>  </span>
+			   	
+			   	<span class = "tab"> <b>Course: </b> <%= course%> </span>
+			   	
+			   	<span class = "tab"> <b>Grade: </b> <%= grade%> </span>
+			   	
+			   	<span class = "tab"> <b>Year: </b> <%= year%> </span>
+				
+			   	<span class = "tab"> <b>Quarter/Semester: </b> <%= semester%> </span>
+			   	<br></br>
+			   	<span> <b>Class Style: </b> <%= classType%> </span>
+			   	
+			   	
+			   	
+			  	<blockquote class = "review">
+			  	<%=content%>
+			  	</blockquote>
+			  	
+			  	<div align="right">
+			       	<input type="submit" value= <%= report%> name = <%= report%>>
+			    </div>
+			    <hr>
+  
+  				</div>
+      			<%
+      		}
+      	}
+      %>
    <div> 
    	<span> <b>Quality: </b> 5   </span>
 

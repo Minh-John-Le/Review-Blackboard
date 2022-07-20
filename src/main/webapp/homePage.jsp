@@ -32,18 +32,18 @@
     <h1>Review Blackboard</h1>
     <form id="Sign-up-form" action = "homeServlet" method="post">
       <div>
-        <label for="Professor">Professor</label>
-        <input type="text" name="professor" class="u-full-width">
+        <label for="fname">Professor First Name</label>
+        <input type="text" name="fname" class="u-full-width">
+      </div>
+      
+      <div>
+        <label for="lname">Professor Last Name</label>
+        <input type="text" name="lname" class="u-full-width">
       </div>
       
       <div>
         <label for="School">School</label>
         <input type="text" name="school" class="u-full-width">
-      </div>
-      
-      <div>
-        <label for="School Zip">School Zip</label>
-        <input type="text" name="zip" class="u-full-width">
       </div>
 
       <div>

@@ -1,16 +1,15 @@
 package Controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
-import java.util.List;
-
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,69 +17,82 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import Beans.Professor;
+
 /**
  * Servlet implementation class HomeServlet
  */
 @WebServlet("/homeServlet")
 public class HomeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private ServletContext context;
+	
+	public void init(ServletConfig config)
+	{				
+		context = config.getServletContext();		
+	}
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-String clickButton = request.getParameter("Button");
+		// Get all parametter
+		String clickButton = request.getParameter("Button");
+		String fname = request.getParameter("fname");
+		String lname = request.getParameter("lname");
+		String school = request.getParameter("school");
+		LinkedList<Professor> professorList = new LinkedList<Professor>();
 		
 		HttpSession session = request.getSession();
 		
+		
 		// Go to Sign up page when click "Sign Up"
-		if(clickButton.equals("Search Professor"))
-		{
-			
-		}
+		
 
 
 		try {
-			
-			
+					
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-
-
-
-			Statement statement = connection.createStatement();
-			String searchUsersql = "SELECT * "
-					+ "FROM Student_User "
-					+ "WHERE email = '" + email + "' and password ='" + password +"'"
-					+";";
-
-
-			ResultSet resultSet = statement.executeQuery(searchUsersql);
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homeServlet");
-			List<String> errList = new LinkedList<String>();
 			
-			
-			if (!resultSet.next()) 
+			if(clickButton.equals("Search Professor"))
 			{
-				errList.add("Username or Password is inccorect!");
-			} 
-			
-			
-			if(!errList.isEmpty()) // no error prceed to home page
-			{
-				request.setAttribute("errlist", errList);
-				requestDispatcher = request.getRequestDispatcher("login.jsp");
+				Statement statement = connection.createStatement();
+				String searchProfessorsql = "SELECT P.user_ID, P.fname, P.lname, S.sname\r\n"
+						+ "FROM professor P, school S\r\n"
+						+ "WHERE P.fname LIKE '" + fname +"%' \r\n"
+						+ "AND P.lname LIKE '" + lname +"%' \r\n"
+						+ "AND P.school_ID = S.school_ID\r\n"
+						+ "AND S.sname Like '" + school + "%';";	
+				
+				ResultSet ProfessorSearchResult = statement.executeQuery(searchProfessorsql);
+
+				while(ProfessorSearchResult.next())
+				{
+					int user_IdString = ProfessorSearchResult.getInt("user_ID");
+					String fnameString =  ProfessorSearchResult.getString("fname");
+					String lnameString =  ProfessorSearchResult.getString("lname");
+					String schoolString = ProfessorSearchResult.getString("sname");
+					
+					System.out.println("user Strin is " + user_IdString);
+					Professor professor = new Professor(user_IdString, fnameString, lnameString, schoolString);
+					professorList.add(professor);
+				}
+				
+				if (!professorList.isEmpty())
+				{
+					session.setAttribute("searchProfessorList", professorList);
+					RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorSearchResult.jsp");
+					requestDispatcher.include(request, response);
+					connection.close();
+					return;
+				}
+				
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
 				requestDispatcher.include(request, response);
 				connection.close();
-				return;
-			}
 				
-			else
-			{
-				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
-				requestDispatcher.forward(request, response);
-				connection.close();
 			}
+			
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

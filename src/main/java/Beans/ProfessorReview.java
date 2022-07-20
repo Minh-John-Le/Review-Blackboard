@@ -15,6 +15,22 @@ public class ProfessorReview {
 	 private String semester = "";
 	 
 	 
+	public ProfessorReview(int reviewID, String content, int professorID, int quality, int difficulty,
+				String courseName, String class_type, String grade, String year, String semester)
+	{
+		this.reviewId = reviewID;
+		this.content = content;
+		this.professorId = professorID;
+		this.quality = quality;
+		this.difficulty = difficulty;
+		this.courseName = courseName;
+		this.class_type = class_type;
+		this.grade = grade;
+		this.year = year;
+		this.semester = semester;
+	}
+	
+	
 	public int getReviewId() {
 		return reviewId;
 	}
