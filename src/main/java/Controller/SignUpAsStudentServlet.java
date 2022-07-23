@@ -3,6 +3,7 @@ package Controller;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-@WebServlet("/signUpServlet")
-public class SignUpServlet extends HttpServlet {
+@WebServlet("/signUpAsStudentServlet")
+public class SignUpAsStudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	ServletContext context;
@@ -34,16 +35,12 @@ public class SignUpServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
-		String displayName = request.getParameter("displayName");
 		String password = request.getParameter("password");
-		String role = request.getParameter("rolelist");
+		String fName = request.getParameter("fName");
+		String lName = request.getParameter("lName");
+		String major = request.getParameter("major");
 		
-		//===================
-		HttpSession session = request.getSession();
-		session.setAttribute("email", email);
-		//System.out.println("Sign up email = " + session.getAttribute("email"));
-		//System.out.println(role);
-		
+
 		//===================
 		
 		
@@ -87,7 +84,7 @@ public class SignUpServlet extends HttpServlet {
 			}
 			
 			
-			if(displayName.equals(""))
+			if(lName.equals("") || lName.equals(""))
 			{
 				errList.add("Display name cannot be empty!");
 			}
@@ -108,9 +105,18 @@ public class SignUpServlet extends HttpServlet {
 			}
 		
 			//  Happy Flow success create new user
-			String signupUser = "INSERT INTO STUDENT (password, email, fname)"
-					+ "VALUES('" + password + "','" + email + "','" + displayName + "');";
-			statement.executeUpdate(signupUser);
+			String signupUser = "INSERT INTO STUDENT (password, email, fname, lname, major)"
+					+ "VALUES(?,?,?,?,?);";
+			
+			PreparedStatement signupUserPstmt = connection.prepareStatement(signupUser);
+			
+			signupUserPstmt.setString(1, password);
+			signupUserPstmt.setString(2, email);
+			signupUserPstmt.setString(3, fName);
+			signupUserPstmt.setString(4, lName);
+			signupUserPstmt.setString(5, major);
+			
+			signupUserPstmt.executeUpdate();
 			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
 			

@@ -77,9 +77,8 @@ public class PreInitServlet extends HttpServlet {
 						+ "email varchar(30) not null unique,\r\n"
 						+ "fname varchar(30),\r\n"
 						+ "lname varchar(30),\r\n"
-						+ "school_id int NOT NULL,\r\n"
+						+ "schoolName varchar(30),\r\n"
 						+ "department varchar(30),\r\n"
-						+ "Foreign Key(school_id) REFERENCES School(school_id) on delete cascade on update cascade,\r\n"
 						+ "Primary key(user_id)\r\n"
 						+ ");;";
 				statement.executeUpdate(professorDDL);

@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -41,7 +40,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		LinkedList<Professor> professorList = (LinkedList<Professor>) (session.getAttribute("searchProfessorList"));
-		int index = 0;
+		
 		
 		
 		if (clickButton != null)
@@ -57,6 +56,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		
 		
 		// Check is user click any view button
+		int index = 0;
 		while(index < professorList.size())
 		{
 			String Id = String.valueOf(professorList.get(index).getUser_ID());
@@ -64,13 +64,20 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 			
 			if(request.getParameter(view) != null)
 			{
-				session.setAttribute("selectedProfessor", Id);
-				ArrayList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
+				Double avgD = this.AvgProfessorDifficulty(Id);
+				Double avgQ = this.AvgProfessorQuality(Id);
+				
+				professorList.get(index).setAvgDifficulty(avgD);
+				professorList.get(index).setAvgQuality(avgQ);
+				session.setAttribute("selectedProfessor", professorList.get(index));
+				//session.setAttribute("selectedProfessor", Id);
+				LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
 				session.setAttribute("professorReview", reviewList);
 				
 				
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
 				requestDispatcher.forward(request, response);
+				
 				return;
 				
 							
@@ -78,28 +85,11 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 			index++;			
 		}
 		
-		try {
-			
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			
-			
-				connection.close();
-			
-			
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
 	}
 	
-	private ArrayList<ProfessorReview> ProfessorReviewList(String professorID)
+	private LinkedList<ProfessorReview> ProfessorReviewList(String professorID)
 	{
-		ArrayList<ProfessorReview> reviewList= new ArrayList<ProfessorReview>();
+		LinkedList<ProfessorReview> reviewList= new LinkedList<ProfessorReview>();
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			
@@ -152,6 +142,73 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		
 		return reviewList;
 		
+	}
+	
+	private double AvgProfessorDifficulty(String professorID)
+	{
+		double result = -1.0;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
+					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			Statement statement = connection.createStatement();
+			String avgDifficultyReviewsql = "SELECT AVG(PR.Difficulty) As avgD "
+					+ "FROM Prof_Reviews PR\r\n"
+					+ "WHERE PR.Prof = '" + professorID + "';";
+
+
+			ResultSet searchResult = statement.executeQuery(avgDifficultyReviewsql);
+			if(searchResult.next())
+			{
+				 result= searchResult.getDouble(1);
+			}
+			result = (double) (Math.round(result*100)/100);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+		return result;
+	}
+	
+	
+	private double AvgProfessorQuality(String professorID)
+	{
+		double result = -1.0;
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
+					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			Statement statement = connection.createStatement();
+			String avgQualityReviewsql = "SELECT AVG(PR.Quality) As avgQ\r\n"
+					+ "FROM Prof_Reviews PR\r\n"
+					+ "WHERE PR.Prof = '" + professorID + "';";
+
+
+			ResultSet searchResult = statement.executeQuery(avgQualityReviewsql);
+			if(searchResult.next())
+			{
+				 result= searchResult.getDouble(1);
+			}
+			result = (double) (Math.round(result*100)/100);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	
+		return result;
 	}
 
 }

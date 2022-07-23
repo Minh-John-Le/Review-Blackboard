@@ -41,7 +41,7 @@
 
       <div>
         <input type="submit" value="Log In" name = "Button">
-        <input type="submit" value="Sign Up" name = "Button">
+        <input type="submit" value="Sign Up As Student" name = "Button">
       </div>
       
 	<%

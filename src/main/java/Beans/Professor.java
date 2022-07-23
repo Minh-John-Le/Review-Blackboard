@@ -5,6 +5,8 @@ public class Professor {
 	private String fname = "";
 	private String lname = "";
 	private String schoolName = "";
+	private double avgDifficulty = -1.0;
+	private double avgQuality = -1.0;
 	
 	
 	public Professor(int user_ID, String fname, String lname, String schoolName)
@@ -40,6 +42,26 @@ public class Professor {
 	}
 	public void setSchoolName(String schoolName) {
 		this.schoolName = schoolName;
+	}
+
+
+	public double getAvgDifficulty() {
+		return avgDifficulty;
+	}
+
+
+	public void setAvgDifficulty(double avgDifficulty) {
+		this.avgDifficulty = avgDifficulty;
+	}
+
+
+	public double getAvgQuality() {
+		return avgQuality;
+	}
+
+
+	public void setAvgQuality(double avgQuality) {
+		this.avgQuality = avgQuality;
 	}
 	
 	

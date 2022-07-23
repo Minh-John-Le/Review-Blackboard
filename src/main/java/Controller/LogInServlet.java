@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import Beans.StudentUser;
+
 /**
  * Servlet implementation class LoginServlet
  */
@@ -45,9 +47,9 @@ public class LogInServlet extends HttpServlet {
 		System.out.println("Log In email =" + session.getAttribute("email"));
 		
 		// Go to Sign up page when click "Sign Up"
-		if(clickButton.equals("Sign Up"))
+		if(clickButton.equals("Sign Up As Student"))
 		{
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.jsp");
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUpAsStudent.jsp");
 			requestDispatcher.forward(request, response);
 			return;
 		}
@@ -65,8 +67,8 @@ public class LogInServlet extends HttpServlet {
 
 
 			Statement statement = connection.createStatement();
-			String searchUsersql = "SELECT * "
-					+ "FROM Student_User "
+			String searchUsersql = "SELECT * \n"
+					+ "FROM Student\n"
 					+ "WHERE email = '" + email + "' and password ='" + password +"'"
 					+";";
 
@@ -93,6 +95,18 @@ public class LogInServlet extends HttpServlet {
 				
 			else
 			{
+				int id = resultSet.getInt("user_id");
+				String passwordString = resultSet.getString("password");
+				String emailString = resultSet.getString("email");
+				String fNameString = resultSet.getString("fname");
+				String lNameString = resultSet.getString("lname");
+				String majorString = resultSet.getString("major");
+
+				StudentUser currentStudentUser = new StudentUser(id, passwordString, emailString,fNameString,lNameString,majorString);
+				
+				session.setAttribute("currentStudentUser", currentStudentUser);
+				session.setAttribute("currentProfessorUser", null);
+				
 				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
 				requestDispatcher.forward(request, response);
 				connection.close();

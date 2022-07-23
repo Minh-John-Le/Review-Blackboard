@@ -57,12 +57,11 @@ public class HomeServlet extends HttpServlet {
 			if(clickButton.equals("Search Professor"))
 			{
 				Statement statement = connection.createStatement();
-				String searchProfessorsql = "SELECT P.user_ID, P.fname, P.lname, S.sname\r\n"
-						+ "FROM professor P, school S\r\n"
+				String searchProfessorsql = "SELECT P.user_ID, P.fname, P.lname, P.schoolName\r\n"
+						+ "FROM professor P\r\n"
 						+ "WHERE P.fname LIKE '" + fname +"%' \r\n"
 						+ "AND P.lname LIKE '" + lname +"%' \r\n"
-						+ "AND P.school_ID = S.school_ID\r\n"
-						+ "AND S.sname Like '" + school + "%';";	
+						+ "AND P.schoolName Like '" + school + "%';";	
 				
 				ResultSet ProfessorSearchResult = statement.executeQuery(searchProfessorsql);
 
@@ -71,11 +70,11 @@ public class HomeServlet extends HttpServlet {
 					int user_IdString = ProfessorSearchResult.getInt("user_ID");
 					String fnameString =  ProfessorSearchResult.getString("fname");
 					String lnameString =  ProfessorSearchResult.getString("lname");
-					String schoolString = ProfessorSearchResult.getString("sname");
-					
-					System.out.println("user Strin is " + user_IdString);
+					String schoolString = ProfessorSearchResult.getString("schoolName");
 					Professor professor = new Professor(user_IdString, fnameString, lnameString, schoolString);
 					professorList.add(professor);
+					
+					
 				}
 				
 				if (!professorList.isEmpty())
@@ -101,5 +100,4 @@ public class HomeServlet extends HttpServlet {
 		}
 		
 	}
-
 }

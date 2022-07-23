@@ -40,6 +40,11 @@
 		display: inline-block;
 		margin-left: 500px;
 	}
+	
+	.textarea {
+  		width: 800px;
+ 		height: 150px;
+	}
   </style>
   
 </head>
@@ -60,21 +65,26 @@
  	<%
  		Professor  professor = (Professor)(session.getAttribute("selectedProfessor"));
  		String professorName = professor.getFname() + " " + professor.getLname();
- 		String avgD = String.valueOf(professor.getAvgDifficulty());
- 		String avgQ = String.valueOf(professor.getAvgQuality());
  		
  	%>
     <h1><%= professorName%></h1>
-    <h2> Average Quality: <%= avgD %></h2>
-    <h2>  Average Difficulty: <%= avgQ %></h2>
-    <form id="Sign-up-form" action = "homeServlet" method="post">
+
+
+   
+    <form id="Sign-up-form" action = "writeProfessorReviewServlet" method="post">
+      
       <div  align="left">
         <b>Course:</b> <input type="text" name="course" >
       
-        <b>From Year:</b> <input type= "text" name= "fromYear">
-        
-        <b>To Year:</b> <input type = "text" name = "toYear">
-         
+        <b>From Year:</b> <input type= "text" name= "Year">
+       
+         <select id = "semester" name = "semester" class = "tab">  
+	          <option> ---Semester/Quarter--- </option>  
+	          <option> Fall</option>  
+	          <option> Winter </option> 
+	          <option> Spring </option>
+	          <option> Summer </option>     
+        </select>
       </div>   
        
            
@@ -118,87 +128,19 @@
                   
       </div>
       
+	<div>
+		<textarea class = "textarea" name="review" id="message" > </textarea>
+	</div>
+   
+
+      
       <span>
          <input type="submit" value="Submit" name = "Button">
       </span>
-      <span class = "tab">
-       	<input type="submit" value="Write Review" name = "Button">
-      </span>
-     
-      
       
       <hr>
 <!-- Review display block-->  
-	<%
-		LinkedList<ProfessorReview> reviewList = (LinkedList<ProfessorReview>) (session.getAttribute("professorReview"));      		
-      	if(reviewList != null)
-      	{
-      		for (int i = 0; i < reviewList.size(); i++)
-      		{
-      			ProfessorReview review = reviewList.get(i);
-      			String id = String.valueOf(review.getReviewId());
-      			String difficulty = String.valueOf(review.getDifficulty());
-      			String quality = String.valueOf(review.getQuality());
-      			String course = review.getCourseName();
-      			String grade = review.getGrade();
-      			String year = review.getYear();
-      			String semester = review.getSemester();
-      			String classType = review.getClass_type();
-      			String content = review.getContent();
-      			String comment = review.getComment();
-      			String report = "report" + id;
-      			
-      			%>
-      			<div> 
-			   	<span> <b>Quality: </b> <%= quality%>  </span>
-			
-			   	<span class = "tab"> <b>Difficulty: </b> <%= difficulty%>  </span>
-			   	
-			   	<span class = "tab"> <b>Course: </b> <%= course%> </span>
-			   	
-			   	<span class = "tab"> <b>Grade: </b> <%= grade%> </span>
-			   	
-			   	<span class = "tab"> <b>Year: </b> <%= year%> </span>
-				
-			   	<span class = "tab"> <b>Quarter/Semester: </b> <%= semester%> </span>
-			   	<br></br>
-			   	<span> <b>Class Style: </b> <%= classType%> </span>
-			   	
-			   	
-			   	
-			  	<blockquote class = "review">
-			  	<%=content%>
-			  	</blockquote>
-			  	
-			  	
-			  	
-			  	<div align="right">
-			       	<input type="submit" value= "Report" name = <%= report%>>
-			    </div>
-			   
-  
-  				</div>
-  				
-  				<% 
-			  		if(!comment.equals(""))
-			  		{
-			  			
-			  	%>
-			  	<div>
-			  		<b>Professor Reply: </b>
-			  	</div>
-					  	<blockquote class = "comment">
-					  	<%=comment%>
-					  	</blockquote>
-			  	<%
-			  		}
-			  	%>
-			  	 <hr>
-      			<%
-      		}
-      	}
-      %>
-
+	
    	</form>
    </div>
 </body>

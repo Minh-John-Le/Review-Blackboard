@@ -27,7 +27,7 @@
 <body>
   <div class="container">
     <h1>Sign Up</h1>
-    <form id="Sign-up-form" action = "signUpServlet" method="get">
+    <form id="Sign-up-form" action = "signUpAsStudentServlet" method="get">
       <div>
         <label for="email">Email</label>
         <input type="text" name="email" class="u-full-width">
@@ -39,16 +39,18 @@
       </div>
 
       <div>
-        <label for="displayName">Display Name</label>
-        <input type="text" name="displayName" class="u-full-width">
+        <label for="displayName">First Name</label>
+        <input type="text" name="fName" class="u-full-width">
       </div>
-
+      
       <div>
-        <select id = "roleList" name = "rolelist" >  
-          <option> ---Choose role--- </option>  
-          <option> Student </option>  
-          <option> Professor </option>       
-        </select> 
+        <label for="displayName">Last Name</label>
+        <input type="text" name="lName" class="u-full-width">
+      </div>
+      
+       <div>
+        <label for="displayName">Major</label>
+        <input type="text" name="major" class="u-full-width">
       </div>
 
       <div>
