@@ -157,7 +157,7 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 			String searchProfessorReviewsql = "SELECT * \r\n"
 					+ "FROM reviewblackboarddb.Prof_Reviews PR\r\n"
 					+ "LEFT JOIN reviewblackboarddb.Comm_prof_rev C\r\n"
-					+ "ON PR.prof = C.professor\r\n"
+					+ "ON  PR.prid = C.prid\r\n"
 					+ "ORDER BY PR.pub_date DESC;";
 
 

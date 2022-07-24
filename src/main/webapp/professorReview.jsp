@@ -3,6 +3,7 @@
 <%@page import = "java.util.LinkedList" %>
 <%@page import = "Beans.ProfessorReview" %>
 <%@page import = "Beans.Professor" %>
+<%@page import = "Beans.ProfessorUser" %>
 
 
 <!DOCTYPE html>
@@ -121,9 +122,17 @@
       <span>
          <input type="submit" value="Submit" name = "Button">
       </span>
+      
+      <%
+      if(session.getAttribute("userRole").equals("student"))
+		{
+      %>>
       <span class = "tab">
        	<input type="submit" value="Write Review" name = "Button">
       </span>
+      <%
+		}
+      %>
      
       
       
@@ -131,7 +140,10 @@
 <!-- Review display block-->  
 	<%
 		LinkedList<ProfessorReview> reviewList = (LinkedList<ProfessorReview>) (session.getAttribute("professorReview"));      		
-      	if(reviewList != null)
+      	Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+      	String selectedProfessorID = String.valueOf(selectedProfessor.getUser_ID());
+	
+		if(reviewList != null)
       	{
       		for (int i = 0; i < reviewList.size(); i++)
       		{
@@ -147,7 +159,9 @@
       			String content = review.getContent();
       			String comment = review.getComment();
       			String report = "report" + id;
+      			String reply = "reply" + id;
       			
+      			out.print("This is loop reply ID " + reply);
       			%>
       			<div> 
 			   	<span> <b>Quality: </b> <%= quality%>  </span>
@@ -171,11 +185,32 @@
 			  	</blockquote>
 			  	
 			  	
-			  	
+			  	<%
+			  		if(session.getAttribute("userRole").equals("student"))
+			  		{
+			  	%>
 			  	<div align="right">
 			       	<input type="submit" value= "Report" name = <%= report%>>
 			    </div>
-			   
+			   	<%
+      				}		
+			   	%>
+			   	
+			   	<%
+			  		if(session.getAttribute("userRole").equals("professor"))
+			  		{
+			  			ProfessorUser professorUser = (ProfessorUser)(session.getAttribute("currentProfessorUser"));
+			  			String userID = String.valueOf(professorUser.getId());
+			  			if(userID.equals(selectedProfessorID))
+			  			{
+			  	%>
+			  	<div align="right">
+			       	<input type="submit" value= "Reply" name = <%=reply%>>
+			    </div>
+			   	<%
+			  			}
+      				}		
+			   	%>
   
   				</div>
   				
@@ -184,8 +219,8 @@
 			  		{
 			  			
 			  	%>
-			  	<div>
-			  		<b>Professor Reply: </b>
+			  	<div class = "tab">
+			  		<b><%="Professor "+ professorName + " reply" %>: </b>
 			  	</div>
 					  	<blockquote class = "comment">
 					  	<%=comment%>

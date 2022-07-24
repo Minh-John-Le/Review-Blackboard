@@ -39,27 +39,54 @@ public class ProfessorReviewServlet extends HttpServlet {
 		String clickButton = request.getParameter("Button");
 		HttpSession session = request.getSession();
 		
-		LinkedList<Professor> professorList = (LinkedList<Professor>) (session.getAttribute("searchProfessorList"));
+		LinkedList<ProfessorReview> proReviewList = (LinkedList<ProfessorReview>) (session.getAttribute("professorReview"));
 		
-	// Check is user click any view button
-		int index = 0;
-		while(index < professorList.size())
+	// Check is user click any report button
+		if(session.getAttribute("userRole").equals("student"))
 		{
-			String Id = String.valueOf(professorList.get(index).getUser_ID());
-			String report = "report" + Id;
-			
-			if(request.getParameter(report) != null)
+			int index = 0;
+			while(index < proReviewList.size())
 			{
+				String Id = String.valueOf(proReviewList.get(index).getReviewId());
+				String report = "report" + Id;
 				
-				session.setAttribute("currentReport", Id);
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("reportProfessorReview.jsp");		
-				requestDispatcher.forward(request, response);
-				
-				return;
-				
-							
+				if(request.getParameter(report) != null)
+				{
+					
+					session.setAttribute("currentReport", Id);
+					RequestDispatcher requestDispatcher = request.getRequestDispatcher("reportProfessorReview.jsp");		
+					requestDispatcher.forward(request, response);
+					
+					return;
+					
+								
+				}
+				index++;			
 			}
-			index++;			
+		}
+		
+		if(session.getAttribute("userRole").equals("professor"))
+		{
+			int index = 0;
+			while(index < proReviewList.size())
+			{
+				String Id = String.valueOf(proReviewList.get(index).getReviewId());
+				String reply = "reply" + Id;
+				
+				System.out.println("This is reply ID " +Id);
+				if(request.getParameter(reply) != null)
+				{
+					
+					session.setAttribute("currentReport", Id);
+					RequestDispatcher requestDispatcher = request.getRequestDispatcher("replyProfessorReview.jsp");		
+					requestDispatcher.forward(request, response);
+					
+					return;
+					
+								
+				}
+				index++;			
+			}
 		}
 		
 		if (clickButton != null)

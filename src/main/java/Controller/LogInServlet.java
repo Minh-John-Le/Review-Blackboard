@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import Beans.ProfessorUser;
 import Beans.StudentUser;
 
 /**
@@ -44,7 +45,6 @@ public class LogInServlet extends HttpServlet {
 		String clickButton = request.getParameter("Button");
 		
 		HttpSession session = request.getSession();
-		System.out.println("Log In email =" + session.getAttribute("email"));
 		
 		// Go to Sign up page when click "Sign Up"
 		if(clickButton.equals("Sign Up As Student"))
@@ -67,18 +67,36 @@ public class LogInServlet extends HttpServlet {
 
 
 			Statement statement = connection.createStatement();
-			String searchUsersql = "SELECT * \n"
+			String searchStudentsql = "SELECT * \n"
 					+ "FROM Student\n"
 					+ "WHERE email = '" + email + "' and password ='" + password +"'"
 					+";";
 
 
-			ResultSet resultSet = statement.executeQuery(searchUsersql);
+			ResultSet studentSearchResult = statement.executeQuery(searchStudentsql);
+			
+			Statement statement2 = connection.createStatement();
+			String searchProfessorsql = "SELECT * \n"
+					+ "FROM Professor\n"
+					+ "WHERE email = '" + email + "' and pw ='" + password +"'"
+					+";";
+
+
+			ResultSet professorSearchResult = statement2.executeQuery(searchProfessorsql);
+			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homeServlet");
 			List<String> errList = new LinkedList<String>();
 			
 			
-			if (!resultSet.next()) 
+			if (studentSearchResult.next())
+			{
+				session.setAttribute("userRole", "student");
+			}
+			else if (professorSearchResult.next())
+			{
+				session.setAttribute("userRole", "professor");
+			}
+			else
 			{
 				errList.add("Username or Password is inccorect!");
 			} 
@@ -93,14 +111,15 @@ public class LogInServlet extends HttpServlet {
 				return;
 			}
 				
-			else
+			if(session.getAttribute("userRole").equals("student"))
 			{
-				int id = resultSet.getInt("user_id");
-				String passwordString = resultSet.getString("password");
-				String emailString = resultSet.getString("email");
-				String fNameString = resultSet.getString("fname");
-				String lNameString = resultSet.getString("lname");
-				String majorString = resultSet.getString("major");
+				int id = studentSearchResult.getInt("user_id");
+				String passwordString = studentSearchResult.getString("password");
+				String emailString = studentSearchResult.getString("email");
+				String fNameString = studentSearchResult.getString("fname");
+				String lNameString = studentSearchResult.getString("lname");
+				String majorString = studentSearchResult.getString("major");
+				
 
 				StudentUser currentStudentUser = new StudentUser(id, passwordString, emailString,fNameString,lNameString,majorString);
 				
@@ -110,7 +129,33 @@ public class LogInServlet extends HttpServlet {
 				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
 				requestDispatcher.forward(request, response);
 				connection.close();
+				return;
 			}
+			
+			if(session.getAttribute("userRole").equals("professor"))
+			{
+				
+				System.out.println("Professor User log in sucess");
+				int id = professorSearchResult.getInt("user_id");
+				String passwordString = professorSearchResult.getString("pw");
+				String emailString = professorSearchResult.getString("email");
+				String fNameString = professorSearchResult.getString("fname");
+				String lNameString = professorSearchResult.getString("lname");
+				String schoolString = professorSearchResult.getString("schoolName");
+				String deparmentString = professorSearchResult.getString("department");
+				
+
+				ProfessorUser currentProfessorUser = new ProfessorUser(id, passwordString, emailString,fNameString,lNameString,schoolString,deparmentString);
+				
+				session.setAttribute("currentStudentUser", null);
+				session.setAttribute("currentProfessorUser", currentProfessorUser);
+				
+				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+				requestDispatcher.forward(request, response);
+				connection.close();
+				return;
+			}
+			
 			
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
