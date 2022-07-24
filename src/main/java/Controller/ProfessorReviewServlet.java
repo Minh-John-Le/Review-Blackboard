@@ -23,8 +23,8 @@ import Beans.ProfessorReview;
 /**
  * Servlet implementation class HomeServlet
  */
-@WebServlet("/professorSearchResultServlet")
-public class ProfessorSearchResultServlet extends HttpServlet {
+@WebServlet("/professorReviewServlet")
+public class ProfessorReviewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ServletContext context;
 	
@@ -41,40 +41,18 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		
 		LinkedList<Professor> professorList = (LinkedList<Professor>) (session.getAttribute("searchProfessorList"));
 		
-		
-		
-		if (clickButton != null)
-		{
-			// if click a button then process
-			if (clickButton.equals("Home"))
-			{
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
-				requestDispatcher.forward(request, response);
-				return;
-			}
-		}
-		
-		
-		// Check is user click any view button
+	// Check is user click any view button
 		int index = 0;
 		while(index < professorList.size())
 		{
 			String Id = String.valueOf(professorList.get(index).getUser_ID());
-			String view = "view" + Id;
+			String report = "report" + Id;
 			
-			if(request.getParameter(view) != null)
+			if(request.getParameter(report) != null)
 			{
-				Double avgD = this.AvgProfessorDifficulty(Id);
-				Double avgQ = this.AvgProfessorQuality(Id);
 				
-				professorList.get(index).setAvgDifficulty(avgD);
-				professorList.get(index).setAvgQuality(avgQ);
-				session.setAttribute("selectedProfessor", professorList.get(index));
-				LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
-				session.setAttribute("professorReview", reviewList);
-				
-				
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+				session.setAttribute("currentReport", Id);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("reportProfessorReview.jsp");		
 				requestDispatcher.forward(request, response);
 				
 				return;
@@ -84,23 +62,127 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 			index++;			
 		}
 		
+		if (clickButton != null)
+		{
+			// if click a button then process
+			if (clickButton.equals("Write Review"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("writeProfessorReview.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+		}
+		
+		
+		if (clickButton.equals("Submit"))
+		{
+			Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+			String course = request.getParameter("course");
+			String fromYear = request.getParameter("fromYear");
+			String toYear = request.getParameter("toYear");
+
+			String quality = request.getParameter("quality");
+			String difficulty = request.getParameter("difficulty");
+			String classStyle = request.getParameter("classStyle");
+			String grade = request.getParameter("grade");	
+			String professorID = String.valueOf(selectedProfessor.getUser_ID());
+			
+			
+			
+			double avgD = this.AvgProfessorDifficulty(professorID);
+			double avgQ = this.AvgProfessorQuality(professorID);
+			
+			selectedProfessor.setAvgDifficulty(avgD);
+			selectedProfessor.setAvgQuality(avgQ);
+			
+			session.setAttribute("selectedProfessor", selectedProfessor);
+			LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(professorID, course, fromYear,  toYear, quality, difficulty,  classStyle ,grade);
+			session.setAttribute("professorReview", reviewList);
+			
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+			requestDispatcher.forward(request, response);
+			return;
+		}
+		
+		
 	}
 	
-	private LinkedList<ProfessorReview> ProfessorReviewList(String professorID)
+	private LinkedList<ProfessorReview> ProfessorReviewList(String professorID, String course, 
+			String fYear, String toYear, 
+			String quality, String difficulty, String classStyle, String grade)
 	{
 		LinkedList<ProfessorReview> reviewList= new LinkedList<ProfessorReview>();
+		if(fYear == null || fYear.equals(""))
+		{
+			fYear = "'0000'";
+		}
+		
+		if(toYear == null || toYear.equals(""))
+		{
+			toYear = "'9999'";
+		}
+		
+		if(course == null || course.equals(""))
+		{
+			course = "";
+		}
+		
+		if(quality == null || quality.length() > 2)
+		{
+			quality = "LIKE '%' ";
+		}
+		else
+		{
+			quality = "= '" + quality +"' "; 
+		}
+		
+		if(difficulty == null || difficulty.length() > 2)
+		{
+			difficulty = "LIKE '%' ";
+		}
+		else
+		{
+			difficulty = "= '" + difficulty +"' "; 
+		}
+		
+		if(classStyle == null || classStyle.equals("---Class Style---"))
+		{
+			classStyle = "LIKE '%' ";
+		}
+		else
+		{
+			classStyle = "= '" + classStyle +"' "; 
+		}
+		
+		if(grade.equals("---Grade---"))
+		{
+			grade = "Like '%'";
+		}
+		else
+		{
+			grade = "= '" + grade +"' ";
+		}
+		
+		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			Statement statement = connection.createStatement();
-			String searchProfessorReviewsql = "SELECT * \r\n"
-					+ "FROM reviewblackboarddb.Prof_Reviews PR\r\n"
-					+ "LEFT JOIN reviewblackboarddb.Comm_prof_rev C\r\n"
-					+ "ON PR.prof = C.professor\r\n"
+			String searchProfessorReviewsql = "SELECT distinct *\r\n"
+					+ "FROM Prof_Reviews PR\r\n"
+					+ "LEFT JOIN Comm_prof_rev C \r\n"
+					+ "ON  PR.prid = C.prid \n"
+					+ "WHERE prof = '" + professorID + "' AND \n"
+							+ "quality " + quality + " AND \n"
+							+ "difficulty " + difficulty + " AND \n"
+							+ "course_name LIKE '" + course +"%' AND \n"
+							+ "class_type " + classStyle + " AND \n"
+							+ "grade " + grade + " AND \n"
+							+ "Pyear > " + fYear + " AND Pyear < " + toYear +"\n"
 					+ "ORDER BY PR.pub_date DESC;";
-
+			//System.out.println(searchProfessorReviewsql);
 
 			ResultSet searchResult = statement.executeQuery(searchProfessorReviewsql);
 			
@@ -111,11 +193,11 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 				int  reviewIDString = searchResult.getInt("prid");
 				String contentString = searchResult.getString("text_cont");
 				int profID = searchResult.getInt("prof");
-				int quality = searchResult.getInt("quality");
-				int difficulty = searchResult.getInt("difficulty");
+				int qualityString = searchResult.getInt("quality");
+				int difficultyString = searchResult.getInt("difficulty");
 				String course_name = searchResult.getString("course_name");
 				String class_type = searchResult.getString("class_type");
-				String grade = searchResult.getString("grade");
+				String gradeString = searchResult.getString("grade");
 				String year = searchResult.getString("Pyear");
 				String semester = searchResult.getString("semester");
 				String comment = searchResult.getString("C.text_cont");
@@ -125,8 +207,8 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 					comment = "";
 				}
 				
-				ProfessorReview review = new ProfessorReview(reviewIDString, contentString, profID, quality, difficulty, course_name, 
-						class_type,grade, year, semester,comment);
+				ProfessorReview review = new ProfessorReview(reviewIDString, contentString, profID, qualityString, difficultyString, course_name, 
+						class_type,gradeString, year, semester,comment);
 				reviewList.add(review);
 			}
 			
@@ -142,6 +224,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		return reviewList;
 		
 	}
+	
 	
 	private double AvgProfessorDifficulty(String professorID)
 	{

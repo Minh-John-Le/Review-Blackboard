@@ -63,12 +63,16 @@
  	</span>
  	
  	<%
- 		Professor  professor = (Professor)(session.getAttribute("selectedProfessor"));
+ 	Professor  professor = (Professor)(session.getAttribute("selectedProfessor"));
+ 	if(professor != null)
+ 	{
  		String professorName = professor.getFname() + " " + professor.getLname();
  		
  	%>
     <h1><%= professorName%></h1>
-
+	<%
+ 	}
+	%>
 
    
     <form id="Sign-up-form" action = "writeProfessorReviewServlet" method="post">
@@ -76,7 +80,7 @@
       <div  align="left">
         <b>Course:</b> <input type="text" name="course" >
       
-        <b>From Year:</b> <input type= "text" name= "Year">
+        <b>From Year:</b> <input type= "number" name= "year">
        
          <select id = "semester" name = "semester" class = "tab">  
 	          <option> ---Semester/Quarter--- </option>  
@@ -129,7 +133,7 @@
       </div>
       
 	<div>
-		<textarea class = "textarea" name="review" id="message" > </textarea>
+		<textarea class = "textarea" name="textContent" id="message" ></textarea>
 	</div>
    
 
@@ -138,7 +142,28 @@
          <input type="submit" value="Submit" name = "Button">
       </span>
       
+      <span class = "tab">
+         <input type="submit" value="Cancel" name = "Button">
+      </span>
+      
+      
       <hr>
+      
+      <%
+      	List errList = (List) request.getAttribute("errlist");      		
+      	if(errList != null)
+      	{
+      		for(Iterator it = errList.iterator(); it.hasNext();)
+      		{
+      			String error = (String) it.next();
+      			%>
+      			<font color ="red">
+      			<li> <%=error%> </li>
+      			</font>
+      			<%
+      		}
+      	}
+      %>
 <!-- Review display block-->  
 	
    	</form>

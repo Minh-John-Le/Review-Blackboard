@@ -67,7 +67,7 @@
     <h1><%= professorName%></h1>
     <h2> Average Quality: <%= avgD %></h2>
     <h2>  Average Difficulty: <%= avgQ %></h2>
-    <form id="Sign-up-form" action = "homeServlet" method="post">
+    <form id="Sign-up-form" action = "professorReviewServlet" method="post">
       <div  align="left">
         <b>Course:</b> <input type="text" name="course" >
       

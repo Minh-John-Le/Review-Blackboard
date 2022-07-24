@@ -63,9 +63,9 @@ public class SignUpAsStudentServlet extends HttpServlet {
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 				
 			Statement statement = connection.createStatement();
-			String searchUsersql = "SELECT * "
-					+ "FROM Student "
-					+ "WHERE email = '" + email + "'" +";";
+			String searchUsersql = "SELECT * \n"
+					+ "FROM Student S \n"
+					+ "WHERE S.email = '" + email + "'" +";";
 					
 			
 			ResultSet resultSet = statement.executeQuery(searchUsersql);
@@ -98,7 +98,7 @@ public class SignUpAsStudentServlet extends HttpServlet {
 			if(!errList.isEmpty()) { //has some error
 				
 				request.setAttribute("errlist", errList);
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.jsp");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUpAsStudent.jsp");
 				requestDispatcher.forward(request, response);
 				connection.close();
 				return;

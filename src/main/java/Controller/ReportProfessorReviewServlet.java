@@ -2,10 +2,14 @@ package Controller;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -19,12 +23,13 @@ import javax.servlet.http.HttpSession;
 
 import Beans.Professor;
 import Beans.ProfessorReview;
+import Beans.StudentUser;
 
 /**
  * Servlet implementation class HomeServlet
  */
-@WebServlet("/professorSearchResultServlet")
-public class ProfessorSearchResultServlet extends HttpServlet {
+@WebServlet("/reportProfessorReviewServlet")
+public class ReportProfessorReviewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ServletContext context;
 	
@@ -34,56 +39,110 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 	}
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		// Get all parameter
 		String clickButton = request.getParameter("Button");
+		
 		HttpSession session = request.getSession();
+		String currentReport = (String) session.getAttribute("currentReport");
+		String textCont = request.getParameter("textContent").trim();
+		StudentUser studentUser = (StudentUser) session.getAttribute("currentStudentUser"); 
+		String studentID = String.valueOf(studentUser.getId());
 		
-		LinkedList<Professor> professorList = (LinkedList<Professor>) (session.getAttribute("searchProfessorList"));
+		Professor professor = (Professor) session.getAttribute("selectedProfessor");
+		LinkedList<String> errlist = new LinkedList<String>();
 		
 		
-		
-		if (clickButton != null)
+		if(clickButton.equals("Cancel"))
 		{
-			// if click a button then process
-			if (clickButton.equals("Home"))
-			{
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
-				requestDispatcher.forward(request, response);
-				return;
-			}
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+			requestDispatcher.forward(request, response);	
+
+		}
+		
+		System.out.println(textCont);
+		
+		if (textCont == null || textCont.equals(""))
+		{
+			errlist.add("Report content cannot be empty!");
 		}
 		
 		
-		// Check is user click any view button
-		int index = 0;
-		while(index < professorList.size())
+		if (studentUser == null || professor == null)
 		{
-			String Id = String.valueOf(professorList.get(index).getUser_ID());
-			String view = "view" + Id;
+			return;
+	
+		}
+		
+		if (clickButton.equals("Submit"))
+		{
+			if(!errlist.isEmpty()) // no error prceed to home page
+			{
+				request.setAttribute("errlist", errlist);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("reportProfessorReview.jsp");
+				requestDispatcher.include(request, response);
+				return;
+			}
 			
-			if(request.getParameter(view) != null)
-			{
-				Double avgD = this.AvgProfessorDifficulty(Id);
-				Double avgQ = this.AvgProfessorQuality(Id);
-				
-				professorList.get(index).setAvgDifficulty(avgD);
-				professorList.get(index).setAvgQuality(avgQ);
-				session.setAttribute("selectedProfessor", professorList.get(index));
-				LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
-				session.setAttribute("professorReview", reviewList);
-				
-				
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
-				requestDispatcher.forward(request, response);
-				
-				return;
-				
-							
-			}
-			index++;			
+			reportReview(currentReport,studentID,textCont);		
 		}
 		
+		
+		
+		
+			
+		Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+		String Id = String.valueOf(selectedProfessor.getUser_ID());
+		double avgD = this.AvgProfessorDifficulty(Id);
+		double avgQ = this.AvgProfessorQuality(Id);
+		
+		selectedProfessor.setAvgDifficulty(avgD);
+		selectedProfessor.setAvgQuality(avgQ);
+		
+		session.setAttribute("selectedProfessor", selectedProfessor);
+		LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
+		System.out.println(reviewList.size());
+		session.setAttribute("professorReview", reviewList);
+		
+		
+		
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+		requestDispatcher.forward(request, response);
+		
+		return;
+		
+	}
+
+	private void reportReview(String reviewID, String author, String content)
+	{
+		try {
+			
+			LocalDateTime today = LocalDateTime.now();
+			String todayString = today.toString();
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			
+			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
+					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			//Statement statement = connection.createStatement();
+			String insertReportsql = "INSERT INTO Stud_reports_Prev(sid, prid, text_cont, report_date) \n"
+					+ "VALUES(?,?,?,?);";
+			
+			PreparedStatement insertReportStmt = connection.prepareStatement(insertReportsql);
+			
+			insertReportStmt.setString(1, reviewID);
+			insertReportStmt.setString(2, author);
+			insertReportStmt.setString(3, content);
+			insertReportStmt.setString(4, todayString);
+			
+
+			insertReportStmt.executeUpdate();
+				
+			connection.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private LinkedList<ProfessorReview> ProfessorReviewList(String professorID)
@@ -142,6 +201,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		return reviewList;
 		
 	}
+	
 	
 	private double AvgProfessorDifficulty(String professorID)
 	{
