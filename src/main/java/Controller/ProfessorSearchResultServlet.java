@@ -46,9 +46,17 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		if (clickButton != null)
 		{
 			// if click a button then process
-			if (clickButton.equals("Home"))
+			if (clickButton.equals("Review Blackboard"))
 			{
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			if (clickButton.equals("Log Out"))
+			{
+				session.setAttribute("currentStudentUser", null);
+				session.setAttribute("currentProfessorUser", null);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");		
 				requestDispatcher.forward(request, response);
 				return;
 			}

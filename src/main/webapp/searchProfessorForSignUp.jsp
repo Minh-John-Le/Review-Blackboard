@@ -1,8 +1,7 @@
 <%@page import = "java.util.List" %>
 <%@page import = "java.util.Iterator" %>
 <%@page import = "java.util.LinkedList" %>
-<%@page import = "Beans.*" %>
-
+<%@page import = "Beans.Professor" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,69 +29,59 @@
 		display: inline-block;
 		margin-left: 40px;
 	}
-	.heading_right
-	{
-		display: inline-block;
-		margin-left: 500px;
-	}
-    
-    
   </style>
   <title>Review Blackboard</title>
 </head>
 <body>
-
-<%
- String user = "";
-	if(session.getAttribute("currentStudentUser") != null)
-	{
-		StudentUser student = (StudentUser) session.getAttribute("currentStudentUser");
-		user = student.getfName() + " " + student.getlName();
-	}
-	
-	if(session.getAttribute("currentProfessorUser") != null)
-	{
-		ProfessorUser professor = (ProfessorUser) session.getAttribute("currentProfessorUser");
-		user = professor.getfName() + " " + professor.getlName();
-	}
-
-%>
-
-<!-- Review filter-->   	
   <div class="container">
-  
-    <form id="Sign-up-form" action = "professorSearchResultServlet" method="post">
+    <h1>Search For Professor</h1>
+    <form id="Sign-up-form" action = "searchProfessorForSignUpServlet" method="post">
     
-    <span class = "heading">
- 		<input type="submit" value="Review Blackboard" name = "Button">
- 			
- 	</span>
- 	<span class = heading_right>
- 		Hello, <%=user%>
- 		<input type="submit" value="Log Out" name = "Button">
- 	</span>
- 	
-    <h1>Professor Search Result</h1>
+
+      <div>
+        <label for="displayName">First Name</label>
+        <input type="text" name="fname" class="u-full-width">
+      </div>
+      
+      <div>
+        <label for="displayName">Last Name</label>
+        <input type="text" name="lname" class="u-full-width">
+      </div>
+      
+       <div>
+        <label for="displayName">School</label>
+        <input type="text" name="school" class="u-full-width">
+      </div>
+
+      <div>
+        <input type="submit" value="Submit" name = "Button" >
+        <input type="submit" value="Add myself" name = "Button" class = "tab" >
+        <input type="submit" value="Cancel" name = "Button" class = "tab">
+      </div>
+      
     
-      <table style = "margin-left: 200px">
-  		<tr>
-    		<th> Name </th>
-    		<th>School</th>
-    		<th>Email</th>
-    		<th> View </th>
-  		</tr>
 		
   		<%
 
       	LinkedList<Professor> professorList = (LinkedList<Professor>) session.getAttribute("searchProfessorList");      		
       	if(professorList != null)
       	{
+      		%>
+      	<table style = "margin-left: 200px">
+  			<tr>
+	    		<th> Name </th>
+	    		<th>School</th>
+	    		<th>Email</th>
+	    		<th> Select </th>
+	  		</tr>
+      		
+      		<%
       		for(int i = 0 ; i < professorList.size(); i++)
       		{
       			String profName = professorList.get(i).getFname() + " " + professorList.get(i).getLname();
       			int user_Id = professorList.get(i).getUser_ID();
       			String schoolName = professorList.get(i).getSchoolName();
-      			String view = "view" + String.valueOf(user_Id);
+      			String select = "select" + String.valueOf(user_Id);
       			String email = professorList.get(i).getEmail();
       			%>
       			
@@ -101,7 +90,7 @@
     				<td> <%=schoolName %> </td>
     				<td> <%=email %> </td>
     				<td>
-    		        	<input type="submit" value="View" name = <%=view%> >
+    		        	<input type="submit" value="View" name = <%=select%> >
     				</td>
   				</tr>
       			<%
@@ -109,10 +98,9 @@
       	}
       	%>
   	</table>
-      
-      
     </form>
   </div>
-
+  
+ 
 </body>
 </html>

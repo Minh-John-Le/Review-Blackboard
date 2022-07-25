@@ -42,6 +42,25 @@ public class ProfessorReviewServlet extends HttpServlet {
 		LinkedList<ProfessorReview> proReviewList = (LinkedList<ProfessorReview>) (session.getAttribute("professorReview"));
 		
 	// Check is user click any report button
+		if (clickButton != null)
+		{
+			// if click a button then process
+			if (clickButton.equals("Review Blackboard"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			if (clickButton.equals("Log Out"))
+			{
+				session.setAttribute("currentStudentUser", null);
+				session.setAttribute("currentProfessorUser", null);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+		}
+		
 		if(session.getAttribute("userRole").equals("student"))
 		{
 			int index = 0;

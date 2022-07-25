@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-@WebServlet("/signUpAsStudentServlet")
-public class SignUpAsStudentServlet extends HttpServlet {
+@WebServlet("/signUpAsProfessorServlet")
+public class SignUpAsProfessorServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	ServletContext context;
@@ -33,12 +33,13 @@ public class SignUpAsStudentServlet extends HttpServlet {
 		context = config.getServletContext();		
 	}
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
 		String lName = request.getParameter("lName");
-		String major = request.getParameter("major");
+		String school = request.getParameter("school");
+		String department = request.getParameter("department");
 		
 
 		//===================
@@ -53,7 +54,7 @@ public class SignUpAsStudentServlet extends HttpServlet {
 			// Return to Log In page if click cancel
 			if(clickButton.equals("Cancel"))
 			{
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("searchProfessorForSignUp.jsp");
 				requestDispatcher.forward(request, response);
 				return;
 			}
@@ -102,15 +103,15 @@ public class SignUpAsStudentServlet extends HttpServlet {
 			if(!errList.isEmpty()) { //has some error
 				
 				request.setAttribute("errlist", errList);
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUpAsStudent.jsp");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("signUpAsProfessor.jsp");
 				requestDispatcher.forward(request, response);
 				connection.close();
 				return;
 			}
 		
 			//  Happy Flow success create new user
-			String signupUser = "INSERT INTO STUDENT (password, email, fname, lname, major)"
-					+ "VALUES(?,?,?,?,?);";
+			String signupUser = "INSERT INTO Professor (pw, email, fname, lname, schoolName, department)"
+					+ "VALUES(?,?,?,?,?,?);";
 			
 			PreparedStatement signupUserPstmt = connection.prepareStatement(signupUser);
 			
@@ -118,7 +119,8 @@ public class SignUpAsStudentServlet extends HttpServlet {
 			signupUserPstmt.setString(2, email);
 			signupUserPstmt.setString(3, fName);
 			signupUserPstmt.setString(4, lName);
-			signupUserPstmt.setString(5, major);
+			signupUserPstmt.setString(5, school);
+			signupUserPstmt.setString(6, department);
 			
 			signupUserPstmt.executeUpdate();
 			

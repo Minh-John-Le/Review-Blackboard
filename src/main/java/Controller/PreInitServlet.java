@@ -62,7 +62,7 @@ public class PreInitServlet extends HttpServlet {
 				String SchoolDDL = " Create Table If Not Exists School(\r\n"
 						+ "school_id int AUTO_INCREMENT,\r\n"
 						+ "sname varchar(100) not null unique,\r\n"
-						+ "street varchar(10),\r\n"
+						+ "street varchar(50),\r\n"
 						+ "city varchar(50),\r\n"
 						+ "state char(2),\r\n"
 						+ "zipcode char(5),\r\n"

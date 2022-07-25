@@ -3,7 +3,7 @@
 <%@page import = "java.util.LinkedList" %>
 <%@page import = "Beans.ProfessorReview" %>
 <%@page import = "Beans.Professor" %>
-<%@page import = "Beans.ProfessorUser" %>
+<%@page import = "Beans.*" %>
 
 
 <!DOCTYPE html>
@@ -46,29 +46,51 @@
 </head>
 <body>
 
+<%
+ String user = "";
+	if(session.getAttribute("currentStudentUser") != null)
+	{
+		StudentUser student = (StudentUser) session.getAttribute("currentStudentUser");
+		user = student.getfName() + " " + student.getlName();
+	}
+	
+	if(session.getAttribute("currentProfessorUser") != null)
+	{
+		ProfessorUser professor = (ProfessorUser) session.getAttribute("currentProfessorUser");
+		user = professor.getfName() + " " + professor.getlName();
+	}
 
+%>
 <!-- Review filter-->  
   <div class="container">
- 	<span class = "heading">
+ 	
+ 	
+ 	
+    <form id="Sign-up-form" action = "professorReviewServlet" method="post">
+    
+    <span class = "heading">
  		<input type="submit" value="Review Blackboard" name = "Button">
  			
  	</span>
  	<span class = heading_right>
- 		Hello, Minh Le 
  		<input type="submit" value="Log Out" name = "Button">
  	</span>
  	
- 	<%
- 		Professor  professor = (Professor)(session.getAttribute("selectedProfessor"));
+    
+    <%
+ 		Professor  professor = (Professor) (session.getAttribute("selectedProfessor"));
  		String professorName = professor.getFname() + " " + professor.getLname();
  		String avgD = String.valueOf(professor.getAvgDifficulty());
- 		String avgQ = String.valueOf(professor.getAvgQuality());
- 		
+ 		String avgQ = String.valueOf(professor.getAvgQuality());	
+ 	
  	%>
+ 	
     <h1><%= professorName%></h1>
     <h2> Average Quality: <%= avgD %></h2>
     <h2>  Average Difficulty: <%= avgQ %></h2>
-    <form id="Sign-up-form" action = "professorReviewServlet" method="post">
+    
+    
+    
       <div  align="left">
         <b>Course:</b> <input type="text" name="course" >
       
@@ -126,7 +148,8 @@
       <%
       if(session.getAttribute("userRole").equals("student"))
 		{
-      %>>
+      %>
+      
       <span class = "tab">
        	<input type="submit" value="Write Review" name = "Button">
       </span>

@@ -3,6 +3,7 @@
 <%@page import = "java.util.LinkedList" %>
 <%@page import = "Beans.ProfessorReview" %>
 <%@page import = "Beans.Professor" %>
+<%@page import = "Beans.*" %>
 
 
 <!DOCTYPE html>
@@ -49,7 +50,21 @@
   
 </head>
 <body>
+<%
+ String user = "";
+	if(session.getAttribute("currentStudentUser") != null)
+	{
+		StudentUser student = (StudentUser) session.getAttribute("currentStudentUser");
+		user = student.getfName() + " " + student.getlName();
+	}
+	
+	if(session.getAttribute("currentProfessorUser") != null)
+	{
+		ProfessorUser professor = (ProfessorUser) session.getAttribute("currentProfessorUser");
+		user = professor.getfName() + " " + professor.getlName();
+	}
 
+%>
 
 <!-- Review filter-->  
   <div class="container">
@@ -58,7 +73,7 @@
  			
  	</span>
  	<span class = heading_right>
- 		Hello, Minh Le 
+ 		Hello, <%=user%>
  		<input type="submit" value="Log Out" name = "Button">
  	</span>
  	
@@ -80,7 +95,7 @@
       <div  align="left">
         <b>Course:</b> <input type="text" name="course" >
       
-        <b>From Year:</b> <input type= "number" name= "year">
+        <b>Year:</b> <input type= "number" name= "year">
        
          <select id = "semester" name = "semester" class = "tab">  
 	          <option> ---Semester/Quarter--- </option>  

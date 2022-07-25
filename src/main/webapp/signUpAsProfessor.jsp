@@ -27,7 +27,7 @@
 <body>
   <div class="container">
     <h1>Sign Up</h1>
-    <form id="Sign-up-form" action = "signUpAsStudentServlet" method="get">
+    <form id="Sign-up-form" action = "signUpAsProfessorServlet" method="post">
     
       <div>
         <label for="email">Email</label>
@@ -64,10 +64,8 @@
         <input type="submit" value="Cancel" name = "Button" >
       </div>
       
-    </form>
-  </div>
-  
-  <%
+      
+       <%
       	List errList = (List) request.getAttribute("errlist");      		
       	if(errList != null)
       	{
@@ -82,5 +80,9 @@
       		}
       	}
       %>
+    </form>
+  </div>
+  
+ 
 </body>
 </html>

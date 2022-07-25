@@ -53,6 +53,14 @@ public class LogInServlet extends HttpServlet {
 			requestDispatcher.forward(request, response);
 			return;
 		}
+		
+		if(clickButton.equals("Sign Up As Professor"))
+		{
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("searchProfessorForSignUp.jsp");
+			session.setAttribute("searchProfessorList", null);
+			requestDispatcher.forward(request, response);
+			return;
+		}
 
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
@@ -87,6 +95,10 @@ public class LogInServlet extends HttpServlet {
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homeServlet");
 			List<String> errList = new LinkedList<String>();
 			
+			if (password.equals(""))
+			{
+				errList.add("Password cannot be empty!");
+			}
 			
 			if (studentSearchResult.next())
 			{
