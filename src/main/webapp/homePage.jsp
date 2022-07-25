@@ -91,6 +91,11 @@
         <input class = "tab" type="submit" value="Search School" name = "Button">
       </div>
       
+      <div>
+        <input type="submit" value="Add Professor" name = "Button">
+        <input class = "tab" type="submit" value="Add School" name = "Button">
+      </div>
+      
     </form>
   </div>
 

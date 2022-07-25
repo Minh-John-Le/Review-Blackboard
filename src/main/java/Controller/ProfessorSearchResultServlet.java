@@ -107,6 +107,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 					+ "FROM Prof_Reviews PR\r\n"
 					+ "LEFT JOIN Comm_prof_rev C\r\n"
 					+ "ON  PR.prid = C.prid\r\n"
+					+ "WHERE PR.prof = '" + professorID + "'"
 					+ "ORDER BY PR.pub_date DESC;";
 
 

@@ -154,10 +154,11 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			Statement statement = connection.createStatement();
-			String searchProfessorReviewsql = "SELECT * \r\n"
-					+ "FROM reviewblackboarddb.Prof_Reviews PR\r\n"
-					+ "LEFT JOIN reviewblackboarddb.Comm_prof_rev C\r\n"
+			String searchProfessorReviewsql = "SELECT Distinct * \r\n"
+					+ "FROM Prof_Reviews PR\r\n"
+					+ "LEFT JOIN Comm_prof_rev C\r\n"
 					+ "ON  PR.prid = C.prid\r\n"
+					+ "WHERE PR.prof = '" + professorID + "'"
 					+ "ORDER BY PR.pub_date DESC;";
 
 

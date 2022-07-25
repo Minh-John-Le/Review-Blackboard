@@ -63,6 +63,21 @@ public class HomeServlet extends HttpServlet {
 				requestDispatcher.forward(request, response);
 				return;
 			}
+			
+			if (clickButton.equals("Add Professor"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("AddProfessor.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			
+			if (clickButton.equals("Add School"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("addSchool.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+		
 		}
 
 		try {

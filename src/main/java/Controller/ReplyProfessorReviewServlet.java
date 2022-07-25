@@ -48,7 +48,8 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 		ProfessorUser professorUser = (ProfessorUser) session.getAttribute("currentProfessorUser"); 
 		String studentID = String.valueOf(professorUser.getId());
 		
-		//Professor professor = (Professor) session.getAttribute("selectedProfessor");
+		Professor professor = (Professor) session.getAttribute("selectedProfessor");
+		String professorID = String.valueOf(professor.getUser_ID());
 		LinkedList<String> errlist = new LinkedList<String>();
 		
 		
@@ -77,7 +78,7 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 				return;
 			}
 			
-			replyReview(currentReport,studentID,textCont);		
+			replyReview(currentReport,professorID,textCont);		
 		}
 		
 		
@@ -185,6 +186,7 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 					+ "FROM Prof_Reviews PR\r\n"
 					+ "LEFT JOIN Comm_prof_rev C\r\n"
 					+ "ON  PR.prid = C.prid\r\n"
+					+ "WHERE PR.prof = '" + professorID + "'"
 					+ "ORDER BY PR.pub_date DESC;";
 
 

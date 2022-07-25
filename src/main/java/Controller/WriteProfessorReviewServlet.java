@@ -72,6 +72,9 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 		LocalDateTime today = LocalDateTime.now();
 		String todayString = today.toString();
 		
+		System.out.println("userID = " + userID);
+		System.out.println("professorID = " + professorID);
+		
 		LinkedList<String> errlist = new LinkedList<String>();
 		
 		if(course == null || year.equals(""))
@@ -130,13 +133,19 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			Statement statement = connection.createStatement();
-			String searchReviewsql = "SELECT distinct *\r\n"
+			String searchReviewsql = "SELECT COUNT(P.author)\r\n"
 					+ "FROM Prof_Reviews P \n"
-					+ "WHERE P.author = '" + userID + "';";
+					+ "WHERE P.author = '" + userID + "' \n"
+					+ "AND P.prof = '" + professorID + "';";
 			
 			ResultSet searchResult = statement.executeQuery(searchReviewsql);
+			int countResult = 0;
+			if(searchResult.next())
+			{
+				 countResult= searchResult.getInt(1);
+			}
 			
-			if(!searchResult.next())
+			if(countResult < 1)
 			{
 											
 				String addReviewsql = "INSERT INTO Prof_Reviews(pub_date,text_cont, author, "
@@ -177,7 +186,8 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 						+ "PR.grade = ?, \n"
 						+ "PR.Pyear = ?, \n"
 						+ "PR.semester = ? \n"
-						+ "WHERE PR.author = '" + userID + "';";
+						+ "WHERE PR.author = '" + userID + "' AND \n"
+						+ "PR.prof = '" + professorID + "';";
 						
 				
 				PreparedStatement addReviewPstmt = connection.prepareStatement(addReviewsql);
@@ -239,10 +249,11 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			Statement statement = connection.createStatement();
-			String searchProfessorReviewsql = "SELECT * \r\n"
-					+ "FROM reviewblackboarddb.Prof_Reviews PR\r\n"
-					+ "LEFT JOIN reviewblackboarddb.Comm_prof_rev C\r\n"
+			String searchProfessorReviewsql = "SELECT Distinct * \r\n"
+					+ "FROM Prof_Reviews PR\r\n"
+					+ "LEFT JOIN Comm_prof_rev C\r\n"
 					+ "ON  PR.prid = C.prid\r\n"
+					+ "WHERE PR.prof = '" + professorID + "'"
 					+ "ORDER BY PR.pub_date DESC;";
 
 
@@ -309,6 +320,7 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 				 result= searchResult.getDouble(1);
 			}
 			result = (double) (Math.round(result*100)/100);
+			connection.close();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -316,6 +328,7 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 	
 		return result;

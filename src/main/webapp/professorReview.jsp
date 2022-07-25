@@ -73,6 +73,7 @@
  			
  	</span>
  	<span class = heading_right>
+ 	Hello, <%=user %>
  		<input type="submit" value="Log Out" name = "Button">
  	</span>
  	
@@ -184,7 +185,7 @@
       			String report = "report" + id;
       			String reply = "reply" + id;
       			
-      			out.print("This is loop reply ID " + reply);
+      			
       			%>
       			<div> 
 			   	<span> <b>Quality: </b> <%= quality%>  </span>

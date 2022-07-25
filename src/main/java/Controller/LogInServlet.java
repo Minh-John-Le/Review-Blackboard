@@ -148,7 +148,7 @@ public class LogInServlet extends HttpServlet {
 			{
 				
 				System.out.println("Professor User log in sucess");
-				int id = professorSearchResult.getInt("user_id");
+				int idString = professorSearchResult.getInt("user_id");
 				String passwordString = professorSearchResult.getString("pw");
 				String emailString = professorSearchResult.getString("email");
 				String fNameString = professorSearchResult.getString("fname");
@@ -156,8 +156,9 @@ public class LogInServlet extends HttpServlet {
 				String schoolString = professorSearchResult.getString("schoolName");
 				String deparmentString = professorSearchResult.getString("department");
 				
+				System.out.println("user Id is " + idString);
 
-				ProfessorUser currentProfessorUser = new ProfessorUser(id, passwordString, emailString,fNameString,lNameString,schoolString,deparmentString);
+				ProfessorUser currentProfessorUser = new ProfessorUser(idString, passwordString, emailString,fNameString,lNameString,schoolString,deparmentString);
 				
 				session.setAttribute("currentStudentUser", null);
 				session.setAttribute("currentProfessorUser", currentProfessorUser);
