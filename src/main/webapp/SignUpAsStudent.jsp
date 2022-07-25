@@ -35,7 +35,7 @@
       
       <div>
         <label for="password">Password</label>
-        <input type="text" name="password" class="u-full-width">
+        <input type="password" name="password" class="u-full-width">
       </div>
 
       <div>
