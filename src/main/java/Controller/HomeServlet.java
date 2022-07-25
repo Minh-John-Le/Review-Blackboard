@@ -86,7 +86,12 @@ public class HomeServlet extends HttpServlet {
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			
-			if(clickButton.equals("Search Professor"))
+			if (clickButton.equals("Search School")) {
+				RequestDispatcher rd = request.getRequestDispatcher("/collegeSearchServlet");
+				rd.forward(request, response);
+			}
+			
+			else if(clickButton.equals("Search Professor"))
 			{
 				Statement statement = connection.createStatement();
 				String searchProfessorsql = "SELECT *\r\n"
