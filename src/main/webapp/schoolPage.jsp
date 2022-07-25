@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="Beans.School, Beans.SchoolReview, Beans.SchoolReviewComment, 
-    dao.SchoolReviewCommentDAO, Beans.StudentUser, Beans.ProfessorUser, java.util.*, java.sql.Date"%>
+    DAO.SchoolReviewCommentDAO, Beans.StudentUser, Beans.ProfessorUser, java.util.*, java.sql.Date"%>
 <!DOCTYPE html>
 <html>
 <head>

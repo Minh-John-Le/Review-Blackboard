@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.SchoolDAO;
-import dao.SchoolReviewDAO;
+import DAO.SchoolDAO;
+import DAO.SchoolReviewDAO;
 import Beans.ProfessorUser;
 import Beans.SchoolReview;
 import Beans.StudentUser;
