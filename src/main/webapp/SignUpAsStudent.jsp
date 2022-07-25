@@ -1,6 +1,5 @@
 <%@page import = "java.util.List" %>
 <%@page import = "java.util.Iterator" %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,8 +26,8 @@
 </head>
 <body>
   <div class="container">
-    <h1>Log In</h1>
-    <form id="Sign-up-form" action = "loginServlet" method="post">
+    <h1>Sign Up</h1>
+    <form id="Sign-up-form" action = "signUpAsStudentServlet" method="get">
       <div>
         <label for="email">Email</label>
         <input type="text" name="email" class="u-full-width">
@@ -40,12 +39,29 @@
       </div>
 
       <div>
-        <input type="submit" value="Log In" name = "Button">
-        <input type="submit" value="Sign Up As Student" name = "Button">
-        <input type="submit" value="Sign Up As Professor" name = "Button">
+        <label for="displayName">First Name</label>
+        <input type="text" name="fName" class="u-full-width">
       </div>
       
-	<%
+      <div>
+        <label for="displayName">Last Name</label>
+        <input type="text" name="lName" class="u-full-width">
+      </div>
+      
+       <div>
+        <label for="displayName">Major</label>
+        <input type="text" name="major" class="u-full-width">
+      </div>
+
+      <div>
+        <input type="submit" value="Submit" name = "Button" >
+        <input type="submit" value="Cancel" name = "Button" >
+      </div>
+      
+    </form>
+  </div>
+  
+  <%
       	List errList = (List) request.getAttribute("errlist");      		
       	if(errList != null)
       	{
@@ -60,8 +76,5 @@
       		}
       	}
       %>
-    </form>
-  </div>
-
 </body>
 </html>

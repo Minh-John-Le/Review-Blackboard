@@ -1,5 +1,5 @@
 <%@page import = "java.util.List" %>
-<%@page import = "java.util.Iterator" %>
+<%@page import = "Beans.*" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,14 +23,54 @@
       background: red;
     }
     
+    .tab 
+	{
+		display: inline-block;
+		margin-left: 40px;
+	}
+	
+	.heading_right
+	{
+		display: inline-block;
+		margin-left: 500px;
+	}
     
   </style>
   <title>Review Blackboard</title>
 </head>
 <body>
+<%
+ String user = "";
+	if(session.getAttribute("currentStudentUser") != null)
+	{
+		StudentUser student = (StudentUser) session.getAttribute("currentStudentUser");
+		user = student.getfName() + " " + student.getlName();
+	}
+	
+	if(session.getAttribute("currentProfessorUser") != null)
+	{
+		ProfessorUser professor = (ProfessorUser) session.getAttribute("currentProfessorUser");
+		user = professor.getfName() + " " + professor.getlName();
+	}
+
+%>
+
+<!-- Review filter-->  
+ 	
   <div class="container">
-    <h1>Review Blackboard</h1>
+   	
     <form id="Sign-up-form" action = "homeServlet" method="post">
+    
+    <span class = "heading">
+ 		<input type="submit" value="Review Blackboard" name = "Button">
+ 			
+ 	</span>
+ 	<span class = heading_right>
+ 		Hello, <%=user%>
+ 		<input type="submit" value="Log Out" name = "Button">
+ 	</span>
+ 	
+    <h1>Review Blackboard</h1>
       <div>
         <label for="fname">Professor First Name</label>
         <input type="text" name="fname" class="u-full-width">
@@ -47,8 +87,13 @@
       </div>
 
       <div>
-        <input type="submit" value="Search School" name = "Button">
         <input type="submit" value="Search Professor" name = "Button">
+        <input class = "tab" type="submit" value="Search School" name = "Button">
+      </div>
+      
+      <div>
+        <input type="submit" value="Add Professor" name = "Button">
+        <input class = "tab" type="submit" value="Add School" name = "Button">
       </div>
       
     </form>

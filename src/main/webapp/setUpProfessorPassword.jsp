@@ -1,5 +1,6 @@
 <%@page import = "java.util.List" %>
 <%@page import = "java.util.Iterator" %>
+<%@page import = "Beans.Professor" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,10 +29,19 @@
 <body>
   <div class="container">
     <h1>Log In</h1>
-    <form id="Sign-up-form" action = "loginServlet" method="post">
+    <form id="Sign-up-form" action = "setUpProfessorPasswordServlet" method="post">
+    <%
+    	Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+    	String emailString = "";
+    	if (selectedProfessor != null)
+    	{
+    		emailString = selectedProfessor.getEmail();
+    	}
+    	
+    %>
+    
       <div>
-        <label for="email">Email</label>
-        <input type="text" name="email" class="u-full-width">
+        <label for="email">Email: <%=emailString %></label>
       </div>
       
       <div>
@@ -40,12 +50,12 @@
       </div>
 
       <div>
-        <input type="submit" value="Log In" name = "Button">
-        <input type="submit" value="Sign Up As Student" name = "Button">
-        <input type="submit" value="Sign Up As Professor" name = "Button">
+        <input type="submit" value="Submit" name = "Button">
+        <input type="submit" value="Cancel" name = "Button">
       </div>
       
-	<%
+      
+        <%
       	List errList = (List) request.getAttribute("errlist");      		
       	if(errList != null)
       	{
@@ -60,6 +70,7 @@
       		}
       	}
       %>
+      
     </form>
   </div>
 

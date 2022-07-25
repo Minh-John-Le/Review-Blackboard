@@ -46,7 +46,39 @@ public class HomeServlet extends HttpServlet {
 		
 		// Go to Sign up page when click "Sign Up"
 		
-
+		if (clickButton != null)
+		{
+			// if click a button then process
+			if (clickButton.equals("Review Blackboard"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			if (clickButton.equals("Log Out"))
+			{
+				session.setAttribute("currentStudentUser", null);
+				session.setAttribute("currentProfessorUser", null);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			
+			if (clickButton.equals("Add Professor"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("AddProfessor.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+			
+			if (clickButton.equals("Add School"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("addSchool.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
+		
+		}
 
 		try {
 					
@@ -57,12 +89,11 @@ public class HomeServlet extends HttpServlet {
 			if(clickButton.equals("Search Professor"))
 			{
 				Statement statement = connection.createStatement();
-				String searchProfessorsql = "SELECT P.user_ID, P.fname, P.lname, S.sname\r\n"
-						+ "FROM professor P, school S\r\n"
+				String searchProfessorsql = "SELECT *\r\n"
+						+ "FROM professor P\r\n"
 						+ "WHERE P.fname LIKE '" + fname +"%' \r\n"
 						+ "AND P.lname LIKE '" + lname +"%' \r\n"
-						+ "AND P.school_ID = S.school_ID\r\n"
-						+ "AND S.sname Like '" + school + "%';";	
+						+ "AND P.schoolName Like '" + school + "%';";	
 				
 				ResultSet ProfessorSearchResult = statement.executeQuery(searchProfessorsql);
 
@@ -71,11 +102,12 @@ public class HomeServlet extends HttpServlet {
 					int user_IdString = ProfessorSearchResult.getInt("user_ID");
 					String fnameString =  ProfessorSearchResult.getString("fname");
 					String lnameString =  ProfessorSearchResult.getString("lname");
-					String schoolString = ProfessorSearchResult.getString("sname");
-					
-					System.out.println("user Strin is " + user_IdString);
-					Professor professor = new Professor(user_IdString, fnameString, lnameString, schoolString);
+					String schoolString = ProfessorSearchResult.getString("schoolName");
+					String emailString = ProfessorSearchResult.getString("email");
+					Professor professor = new Professor(user_IdString, fnameString, lnameString, schoolString,emailString);
 					professorList.add(professor);
+					
+					
 				}
 				
 				if (!professorList.isEmpty())
@@ -101,5 +133,4 @@ public class HomeServlet extends HttpServlet {
 		}
 		
 	}
-
 }

@@ -27,7 +27,8 @@
 <body>
   <div class="container">
     <h1>Sign Up</h1>
-    <form id="Sign-up-form" action = "signUpServlet" method="get">
+    <form id="Sign-up-form" action = "signUpAsProfessorServlet" method="post">
+    
       <div>
         <label for="email">Email</label>
         <input type="text" name="email" class="u-full-width">
@@ -39,16 +40,23 @@
       </div>
 
       <div>
-        <label for="displayName">Display Name</label>
-        <input type="text" name="displayName" class="u-full-width">
+        <label for="displayName">First Name</label>
+        <input type="text" name="fName" class="u-full-width">
       </div>
-
+      
       <div>
-        <select id = "roleList" name = "rolelist" >  
-          <option> ---Choose role--- </option>  
-          <option> Student </option>  
-          <option> Professor </option>       
-        </select> 
+        <label for="displayName">Last Name</label>
+        <input type="text" name="lName" class="u-full-width">
+      </div>
+      
+       <div>
+        <label for="displayName">School</label>
+        <input type="text" name="school" class="u-full-width">
+      </div>
+      
+      <div>
+        <label for="displayName">Department</label>
+        <input type="text" name="department" class="u-full-width">
       </div>
 
       <div>
@@ -56,10 +64,8 @@
         <input type="submit" value="Cancel" name = "Button" >
       </div>
       
-    </form>
-  </div>
-  
-  <%
+      
+       <%
       	List errList = (List) request.getAttribute("errlist");      		
       	if(errList != null)
       	{
@@ -74,5 +80,9 @@
       		}
       	}
       %>
+    </form>
+  </div>
+  
+ 
 </body>
 </html>

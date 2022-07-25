@@ -1,7 +1,9 @@
 <%@page import = "java.util.List" %>
 <%@page import = "java.util.Iterator" %>
-<%@page import = "java.util.ArrayList" %>
+<%@page import = "java.util.LinkedList" %>
 <%@page import = "Beans.ProfessorReview" %>
+<%@page import = "Beans.Professor" %>
+<%@page import = "Beans.*" %>
 
 
 <!DOCTYPE html>
@@ -16,6 +18,11 @@
   <style>
   .review {
 	  margin-left: 20px;
+	  padding: 20px;
+	}
+	
+	.comment {
+	  margin-left: 40px;
 	  padding: 20px;
 	}
 
@@ -39,22 +46,52 @@
 </head>
 <body>
 
+<%
+ String user = "";
+	if(session.getAttribute("currentStudentUser") != null)
+	{
+		StudentUser student = (StudentUser) session.getAttribute("currentStudentUser");
+		user = student.getfName() + " " + student.getlName();
+	}
+	
+	if(session.getAttribute("currentProfessorUser") != null)
+	{
+		ProfessorUser professor = (ProfessorUser) session.getAttribute("currentProfessorUser");
+		user = professor.getfName() + " " + professor.getlName();
+	}
 
+%>
 <!-- Review filter-->  
   <div class="container">
- 	<span class = "heading">
+ 	
+ 	
+ 	
+    <form id="Sign-up-form" action = "professorReviewServlet" method="post">
+    
+    <span class = "heading">
  		<input type="submit" value="Review Blackboard" name = "Button">
  			
  	</span>
  	<span class = heading_right>
- 		Hello, Minh Le 
+ 	Hello, <%=user %>
  		<input type="submit" value="Log Out" name = "Button">
  	</span>
  	
-    <h1> Ramin Moazeni</h1>
-    <h2> Average Quality: 5</h2>
-    <h2>  Average Difficulty: 5</h2>
-    <form id="Sign-up-form" action = "homeServlet" method="post">
+    
+    <%
+ 		Professor  professor = (Professor) (session.getAttribute("selectedProfessor"));
+ 		String professorName = professor.getFname() + " " + professor.getLname();
+ 		String avgD = String.valueOf(professor.getAvgDifficulty());
+ 		String avgQ = String.valueOf(professor.getAvgQuality());	
+ 	
+ 	%>
+ 	
+    <h1><%= professorName%></h1>
+    <h2> Average Quality: <%= avgD %></h2>
+    <h2>  Average Difficulty: <%= avgQ %></h2>
+    
+    
+    
       <div  align="left">
         <b>Course:</b> <input type="text" name="course" >
       
@@ -108,17 +145,29 @@
       <span>
          <input type="submit" value="Submit" name = "Button">
       </span>
+      
+      <%
+      if(session.getAttribute("userRole").equals("student"))
+		{
+      %>
+      
       <span class = "tab">
        	<input type="submit" value="Write Review" name = "Button">
       </span>
+      <%
+		}
+      %>
      
       
       
       <hr>
 <!-- Review display block-->  
 	<%
-      	ArrayList<ProfessorReview> reviewList = (ArrayList<ProfessorReview>) (session.getAttribute("professorReview"));      		
-      	if(reviewList != null)
+		LinkedList<ProfessorReview> reviewList = (LinkedList<ProfessorReview>) (session.getAttribute("professorReview"));      		
+      	Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+      	String selectedProfessorID = String.valueOf(selectedProfessor.getUser_ID());
+	
+		if(reviewList != null)
       	{
       		for (int i = 0; i < reviewList.size(); i++)
       		{
@@ -132,7 +181,10 @@
       			String semester = review.getSemester();
       			String classType = review.getClass_type();
       			String content = review.getContent();
+      			String comment = review.getComment();
       			String report = "report" + id;
+      			String reply = "reply" + id;
+      			
       			
       			%>
       			<div> 
@@ -156,45 +208,56 @@
 			  	<%=content%>
 			  	</blockquote>
 			  	
+			  	
+			  	<%
+			  		if(session.getAttribute("userRole").equals("student"))
+			  		{
+			  	%>
 			  	<div align="right">
-			       	<input type="submit" value= <%= report%> name = <%= report%>>
+			       	<input type="submit" value= "Report" name = <%= report%>>
 			    </div>
-			    <hr>
+			   	<%
+      				}		
+			   	%>
+			   	
+			   	<%
+			  		if(session.getAttribute("userRole").equals("professor"))
+			  		{
+			  			ProfessorUser professorUser = (ProfessorUser)(session.getAttribute("currentProfessorUser"));
+			  			String userID = String.valueOf(professorUser.getId());
+			  			if(userID.equals(selectedProfessorID))
+			  			{
+			  	%>
+			  	<div align="right">
+			       	<input type="submit" value= "Reply" name = <%=reply%>>
+			    </div>
+			   	<%
+			  			}
+      				}		
+			   	%>
   
   				</div>
+  				
+  				<% 
+			  		if(!comment.equals(""))
+			  		{
+			  			
+			  	%>
+			  	<div class = "tab">
+			  		<b><%="Professor "+ professorName + " reply" %>: </b>
+			  	</div>
+					  	<blockquote class = "comment">
+					  	<%=comment%>
+					  	</blockquote>
+			  	<%
+			  		}
+			  	%>
+			  	 <hr>
       			<%
       		}
       	}
       %>
-   <div> 
-   	<span> <b>Quality: </b> 5   </span>
 
-   	<span class = "tab"> <b>Difficulty: </b> 5 </span>
-   	
-   	<span class = "tab"> <b>Course: </b> CS157A </span>
-   	
-   	<span class = "tab"> <b>Grade: </b> Not Sure Yet </span>
-   	
-   	<span class = "tab"> <b>Year: </b> 2022 </span>
-	
-   	<span class = "tab"> <b>Quarter/Semester: </b> Summer </span>
-   	<br></br>
-   	<span> <b>Class Style: </b> Online </span>
-   	
-   	
-   	
-  	<blockquote class = "review">
-  
-  	Lectures are amazing. He always pauses for questions. He goes through the code examples in detail which are helpful. The exercises are well structured and serve as a tutorial to apply the concepts we learned in class. He is very responsive to email and questions and holds extra office hours frequently to help students who are stuck in assignments.You don't know there's a quiz unless you check canvas-- they are posted and due day of. I missed several quizzes because of this and my work schedule. I was never allowed to make it up, being blamed for not checking. He is incredibly unsympathetic towards students who work. Rude in emails.
-  	</blockquote>
-  	
-  	<div align="right">
-       	<input type="submit" value="Report" name = "Button">
-    </div>
-    
-  <hr>
-  
-  </div>
    	</form>
    </div>
 </body>

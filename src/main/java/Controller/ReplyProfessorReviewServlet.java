@@ -2,10 +2,14 @@ package Controller;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -19,12 +23,14 @@ import javax.servlet.http.HttpSession;
 
 import Beans.Professor;
 import Beans.ProfessorReview;
+import Beans.ProfessorUser;
+import Beans.StudentUser;
 
 /**
  * Servlet implementation class HomeServlet
  */
-@WebServlet("/professorSearchResultServlet")
-public class ProfessorSearchResultServlet extends HttpServlet {
+@WebServlet("/replyProfessorReviewServlet")
+public class ReplyProfessorReviewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ServletContext context;
 	
@@ -34,64 +40,137 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 	}
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		// Get all parameter
 		String clickButton = request.getParameter("Button");
+		
 		HttpSession session = request.getSession();
+		String currentReport = (String) session.getAttribute("currentReport");
+		String textCont = request.getParameter("textContent").trim();
+		ProfessorUser professorUser = (ProfessorUser) session.getAttribute("currentProfessorUser"); 
+		String studentID = String.valueOf(professorUser.getId());
 		
-		LinkedList<Professor> professorList = (LinkedList<Professor>) (session.getAttribute("searchProfessorList"));
+		Professor professor = (Professor) session.getAttribute("selectedProfessor");
+		String professorID = String.valueOf(professor.getUser_ID());
+		LinkedList<String> errlist = new LinkedList<String>();
 		
 		
-		
-		if (clickButton != null)
+		if(clickButton.equals("Cancel"))
 		{
-			// if click a button then process
-			if (clickButton.equals("Review Blackboard"))
-			{
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");		
-				requestDispatcher.forward(request, response);
-				return;
-			}
-			if (clickButton.equals("Log Out"))
-			{
-				session.setAttribute("currentStudentUser", null);
-				session.setAttribute("currentProfessorUser", null);
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");		
-				requestDispatcher.forward(request, response);
-				return;
-			}
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+			requestDispatcher.forward(request, response);	
+
 		}
 		
+		System.out.println(textCont);
 		
-		// Check is user click any view button
-		int index = 0;
-		while(index < professorList.size())
+		if (textCont == null || textCont.equals(""))
 		{
-			String Id = String.valueOf(professorList.get(index).getUser_ID());
-			String view = "view" + Id;
+			errlist.add("Report content cannot be empty!");
+		}
+		
+
+		if (clickButton.equals("Submit"))
+		{
+			if(!errlist.isEmpty()) // no error prceed to home page
+			{
+				request.setAttribute("errlist", errlist);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("replyProfessorReview.jsp");
+				requestDispatcher.include(request, response);
+				return;
+			}
 			
-			if(request.getParameter(view) != null)
-			{
-				Double avgD = this.AvgProfessorDifficulty(Id);
-				Double avgQ = this.AvgProfessorQuality(Id);
-				
-				professorList.get(index).setAvgDifficulty(avgD);
-				professorList.get(index).setAvgQuality(avgQ);
-				session.setAttribute("selectedProfessor", professorList.get(index));
-				LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
-				session.setAttribute("professorReview", reviewList);
-				
-				
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
-				requestDispatcher.forward(request, response);
-				
-				return;
-				
-							
-			}
-			index++;			
+			replyReview(currentReport,professorID,textCont);		
 		}
 		
+		
+		
+		
+			
+		Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+		String Id = String.valueOf(selectedProfessor.getUser_ID());
+		double avgD = this.AvgProfessorDifficulty(Id);
+		double avgQ = this.AvgProfessorQuality(Id);
+		
+		selectedProfessor.setAvgDifficulty(avgD);
+		selectedProfessor.setAvgQuality(avgQ);
+		
+		session.setAttribute("selectedProfessor", selectedProfessor);
+		LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
+		System.out.println(reviewList.size());
+		session.setAttribute("professorReview", reviewList);
+		
+		
+		
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+		requestDispatcher.forward(request, response);
+		
+		return;
+		
+	}
+
+	private void replyReview(String reviewID, String professor, String content)
+	{
+		try {
+			
+			LocalDateTime today = LocalDateTime.now();
+			String todayString = today.toString();
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
+					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			
+			
+			Statement statement = connection.createStatement();
+			String searchCommentsql = "SELECT distinct *\r\n"
+					+ "FROM comm_prof_rev C \n"
+					+ "WHERE C.prid = '" + reviewID + "' AND\n"
+						+ " C.professor = '" + professor + "';";
+			
+			ResultSet searchResult = statement.executeQuery(searchCommentsql);
+			
+			if(!searchResult.next())
+			{
+											
+				String addReviewsql = "INSERT INTO comm_prof_rev(prid, professor, pub_date, text_cont) \n"
+						+ "VALUES(?,?,?,?)";
+				PreparedStatement addReviewPstmt = connection.prepareStatement(addReviewsql);
+				
+				addReviewPstmt.setString(1, reviewID);
+				addReviewPstmt.setString(2, professor);	
+				addReviewPstmt.setString(3, todayString);
+				addReviewPstmt.setString(4, content);		
+				addReviewPstmt.executeUpdate();
+				
+			}
+			
+			else
+			{
+
+				String addReviewsql = "UPDATE comm_prof_rev C \n"
+						+ "SET C.pub_date = ? , \n"
+						+ "C.text_cont = ? \n"
+						+ "WHERE C.prid = '" + reviewID + "' AND\n"
+						+ " C.professor = '" + professor + "';";
+
+			
+						
+				
+				PreparedStatement addReviewPstmt = connection.prepareStatement(addReviewsql);
+				
+				addReviewPstmt.setString(1, todayString);
+				addReviewPstmt.setString(2, content);	
+	
+				
+				addReviewPstmt.executeUpdate();
+				
+			}
+		
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private LinkedList<ProfessorReview> ProfessorReviewList(String professorID)
@@ -103,7 +182,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 			Statement statement = connection.createStatement();
-			String searchProfessorReviewsql = "SELECT Distinct * \r\n"
+			String searchProfessorReviewsql = "SELECT Distinct* \r\n"
 					+ "FROM Prof_Reviews PR\r\n"
 					+ "LEFT JOIN Comm_prof_rev C\r\n"
 					+ "ON  PR.prid = C.prid\r\n"
@@ -117,7 +196,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 			
 			while(searchResult.next())
 			{
-				int  reviewIDString = searchResult.getInt("PR.prid");
+				int  reviewIDString = searchResult.getInt("prid");
 				String contentString = searchResult.getString("text_cont");
 				int profID = searchResult.getInt("prof");
 				int quality = searchResult.getInt("quality");
@@ -127,17 +206,15 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 				String grade = searchResult.getString("grade");
 				String year = searchResult.getString("Pyear");
 				String semester = searchResult.getString("semester");
-				String comment = searchResult.getString("C.text_cont");
+				String commentString = searchResult.getString("C.text_cont");
 				
-				if (comment == null)
+				if (commentString == null)
 				{
-					comment = "";
+					commentString = "";
 				}
 				
-				System.out.println(" reviewID is --" + reviewIDString);
-				
 				ProfessorReview review = new ProfessorReview(reviewIDString, contentString, profID, quality, difficulty, course_name, 
-						class_type,grade, year, semester,comment);
+						class_type,grade, year, semester,commentString);
 				reviewList.add(review);
 			}
 			
@@ -153,6 +230,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 		return reviewList;
 		
 	}
+	
 	
 	private double AvgProfessorDifficulty(String professorID)
 	{

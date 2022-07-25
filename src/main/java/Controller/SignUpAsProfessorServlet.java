@@ -3,6 +3,7 @@ package Controller;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-@WebServlet("/signUpServlet")
-public class SignUpServlet extends HttpServlet {
+@WebServlet("/signUpAsProfessorServlet")
+public class SignUpAsProfessorServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	ServletContext context;
@@ -32,18 +33,15 @@ public class SignUpServlet extends HttpServlet {
 		context = config.getServletContext();		
 	}
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String email = request.getParameter("email");
-		String displayName = request.getParameter("displayName");
 		String password = request.getParameter("password");
-		String role = request.getParameter("rolelist");
+		String fName = request.getParameter("fName");
+		String lName = request.getParameter("lName");
+		String school = request.getParameter("school");
+		String department = request.getParameter("department");
 		
-		//===================
-		HttpSession session = request.getSession();
-		session.setAttribute("email", email);
-		//System.out.println("Sign up email = " + session.getAttribute("email"));
-		//System.out.println(role);
-		
+
 		//===================
 		
 		
@@ -56,7 +54,7 @@ public class SignUpServlet extends HttpServlet {
 			// Return to Log In page if click cancel
 			if(clickButton.equals("Cancel"))
 			{
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("searchProfessorForSignUp.jsp");
 				requestDispatcher.forward(request, response);
 				return;
 			}
@@ -66,9 +64,13 @@ public class SignUpServlet extends HttpServlet {
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 				
 			Statement statement = connection.createStatement();
-			String searchUsersql = "SELECT * "
-					+ "FROM Student "
-					+ "WHERE email = '" + email + "'" +";";
+			String searchUsersql = "SELECT P.user_id \n"
+					+ "FROM Professor P \n"
+					+ "WHERE P.email = '" + email + "'" +""
+					+ "UNION \n"
+					+ "SELECT S.user_id \n"
+					+ "FROM Student S \n"
+					+ "WHERE S.email = '" + email + "';";
 					
 			
 			ResultSet resultSet = statement.executeQuery(searchUsersql);
@@ -87,7 +89,7 @@ public class SignUpServlet extends HttpServlet {
 			}
 			
 			
-			if(displayName.equals(""))
+			if(lName.equals("") || lName.equals(""))
 			{
 				errList.add("Display name cannot be empty!");
 			}
@@ -101,16 +103,26 @@ public class SignUpServlet extends HttpServlet {
 			if(!errList.isEmpty()) { //has some error
 				
 				request.setAttribute("errlist", errList);
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUp.jsp");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("signUpAsProfessor.jsp");
 				requestDispatcher.forward(request, response);
 				connection.close();
 				return;
 			}
 		
 			//  Happy Flow success create new user
-			String signupUser = "INSERT INTO STUDENT (password, email, fname)"
-					+ "VALUES('" + password + "','" + email + "','" + displayName + "');";
-			statement.executeUpdate(signupUser);
+			String signupUser = "INSERT INTO Professor (pw, email, fname, lname, schoolName, department)"
+					+ "VALUES(?,?,?,?,?,?);";
+			
+			PreparedStatement signupUserPstmt = connection.prepareStatement(signupUser);
+			
+			signupUserPstmt.setString(1, password);
+			signupUserPstmt.setString(2, email);
+			signupUserPstmt.setString(3, fName);
+			signupUserPstmt.setString(4, lName);
+			signupUserPstmt.setString(5, school);
+			signupUserPstmt.setString(6, department);
+			
+			signupUserPstmt.executeUpdate();
 			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
 			

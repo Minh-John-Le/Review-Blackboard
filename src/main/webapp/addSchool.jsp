@@ -92,7 +92,11 @@
           <td><input name="zipcode" size="70" /></td>
         </tr>
         <td />
-        <td><input type="submit" value="Submit" /></td>
+        <td><input type="submit" value="Submit" name = "Button" />
+        <input type="submit" value="Cancel" name = "Button" />
+        </td>
+      
+        
       </table>
        <%
       	List errList = (List) request.getAttribute("errlist");      		
