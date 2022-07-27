@@ -77,6 +77,13 @@ public class HomeServlet extends HttpServlet {
 				requestDispatcher.forward(request, response);
 				return;
 			}
+			
+			if (clickButton.equals("Support"))
+			{
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("supportTicket.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
+			}
 		
 		}
 

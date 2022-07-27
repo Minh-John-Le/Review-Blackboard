@@ -34,6 +34,12 @@
 		display: inline-block;
 		margin-left: 500px;
 	}
+	
+	.foot_right
+	{
+		display: inline-block;
+		margin-left: 800px;
+	}
     
   </style>
   <title>Review Blackboard</title>
@@ -96,6 +102,9 @@
         <input class = "tab" type="submit" value="Add School" name = "Button">
       </div>
       
+      <footer>
+      <input class = "foot_right" type="submit" value="Support" name = "Button">
+      </footer>
     </form>
   </div>
 
