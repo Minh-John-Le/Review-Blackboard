@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import dao.SchoolDAO;
-import dao.SchoolReviewDAO;
+import DAO.SchoolDAO;
+import DAO.SchoolReviewDAO;
 import Beans.SchoolReview;
 
 /**

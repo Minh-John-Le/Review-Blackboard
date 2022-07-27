@@ -1,4 +1,6 @@
 <%@page import = "java.util.List" %>
+<%@page import = "java.util.Iterator" %>
+<%@page import = "java.util.LinkedList" %>
 <%@page import = "Beans.*" %>
 
 <!DOCTYPE html>
@@ -28,23 +30,18 @@
 		display: inline-block;
 		margin-left: 40px;
 	}
-	
 	.heading_right
 	{
 		display: inline-block;
 		margin-left: 500px;
 	}
-	
-	.foot_right
-	{
-		display: inline-block;
-		margin-left: 800px;
-	}
+    
     
   </style>
   <title>Review Blackboard</title>
 </head>
 <body>
+
 <%
  String user = "";
 	if(session.getAttribute("currentStudentUser") != null)
@@ -61,11 +58,10 @@
 
 %>
 
-<!-- Review filter-->  
- 	
+<!-- Review filter-->   	
   <div class="container">
-   	
-    <form id="Sign-up-form" action = "homeServlet" method="post">
+  
+    <form id="Sign-up-form" action = "schoolSearchResultServlet" method="post">
     
     <span class = "heading">
  		<input type="submit" value="Review Blackboard" name = "Button">
@@ -76,35 +72,54 @@
  		<input type="submit" value="Log Out" name = "Button">
  	</span>
  	
-    <h1>Review Blackboard</h1>
-      <div>
-        <label for="fname">Professor First Name</label>
-        <input type="text" name="fname" class="u-full-width">
-      </div>
-      
-      <div>
-        <label for="lname">Professor Last Name</label>
-        <input type="text" name="lname" class="u-full-width">
-      </div>
-      
-      <div>
-        <label for="School">School</label>
-        <input type="text" name="school" class="u-full-width">
-      </div>
+    <h1>Professor Search Result</h1>
+    
+      <table style = "margin-left: 200px">
+  		<tr>
+    		<th> School </th>
+    		<th>Street</th>
+    		<th>City</th>
+    		<th> State </th>
+    		<th> Zip </th>
+  		</tr>
+		
+  		<%
 
-      <div>
-        <input type="submit" value="Search Professor" name = "Button">
-        <input class = "tab" type="submit" value="Search School" name = "Button">
-      </div>
+      	LinkedList<School> searchSchoolList = (LinkedList<School>) session.getAttribute("searchSchoolList");      		
+      	if(searchSchoolList != null)
+      	{
+      		for(int i = 0 ; i < searchSchoolList.size(); i++)
+      		{
+      			School currentSchool = searchSchoolList.get(i);
+      			
+      			String schoolName = currentSchool.getName();
+      			String street = currentSchool.getStreet();
+      			String city = currentSchool.getCity();
+      			String state = currentSchool.getState();
+      			String zip = currentSchool.getZip();
+      			String id = String.valueOf(currentSchool.getSchoolId());
+      			String view = "view" + id;
+      			
+      			%>
+      			
+      			<tr>
+   		 			<td> <%=schoolName%> </td>
+    				<td> <%=street %> </td>
+    				<td> <%=city %> </td>
+    				<td> <%=state %> </td>
+    				<td> <%=zip %> </td>
+    				
+    				<td>
+    		        	<input type="submit" value="View" name = <%=view%> >
+    				</td>
+  				</tr>
+      			<%
+      		}
+      	}
+      	%>
+  	</table>
       
-      <div>
-        <input type="submit" value="Add Professor" name = "Button">
-        <input class = "tab" type="submit" value="Add School" name = "Button">
-      </div>
       
-      <footer>
-      <input class = "foot_right" type="submit" value="Support" name = "Button">
-      </footer>
     </form>
   </div>
 

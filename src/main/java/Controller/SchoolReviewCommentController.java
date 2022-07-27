@@ -15,9 +15,9 @@ import Beans.ProfessorUser;
 import Beans.SchoolReview;
 import Beans.SchoolReviewComment;
 import Beans.StudentUser;
-import dao.SchoolDAO;
-import dao.SchoolReviewCommentDAO;
-import dao.SchoolReviewDAO;
+import DAO.SchoolDAO;
+import DAO.SchoolReviewCommentDAO;
+import DAO.SchoolReviewDAO;
 
 /**
  * Servlet implementation class SchoolReviewCommentController

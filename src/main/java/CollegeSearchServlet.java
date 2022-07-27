@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import dao.SchoolDAO;
-import dao.SchoolReviewDAO;
+import DAO.SchoolDAO;
+import DAO.SchoolReviewDAO;
 import Beans.School;
 import Beans.SchoolReview;
 
@@ -31,7 +33,8 @@ public class CollegeSearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		RequestDispatcher rd = request.getRequestDispatcher("/schoolPage.jsp");
 		
-		School school = schoolDao.findSchool(request.getParameter("school"));
+		HttpSession session = request.getSession();
+		School school = schoolDao.findSchool((String) session.getAttribute("selectSchoolName"));
 		
 		// School the user searched for is not in the database
 		if (school.getName() == null) {
@@ -42,8 +45,8 @@ public class CollegeSearchServlet extends HttpServlet {
 		
 		ArrayList<SchoolReview> reviews = schoolReviewDao.findSchoolReviews(school.getSchoolId());
 
-		request.setAttribute("school", school);
-		request.setAttribute("reviews", reviews);
+		session.setAttribute("school", school);
+		session.setAttribute("reviews", reviews);
 		
 		rd.forward(request, response);
 	}

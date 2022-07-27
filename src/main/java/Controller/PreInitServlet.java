@@ -185,6 +185,27 @@ public class PreInitServlet extends HttpServlet {
 						+ ");";
 				statement.executeUpdate(Stud_Reports_PrevDDL);
 				
+				String ProfessorSupportDDL = "CREATE TABLE IF NOT EXISTS ProfessorSupportTicket(\r\n"
+						+ "ticketID int  AUTO_INCREMENT,\r\n"
+						+ "ProfessorID int NOT NULL,\r\n"
+						+ "supportTag VARCHAR(50),\r\n"
+						+ "Text_content VARCHAR(200),\r\n"
+						+ "publishDate VARCHAR(30),\r\n"
+						+ "PRIMARY KEY(TicketID),\r\n"
+						+ "Foreign key(ProfessorID) References Professor(user_id) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(ProfessorSupportDDL);
+				
+				String StudentSupportDDL = "CREATE TABLE IF NOT EXISTS StudentSupportTicket(\r\n"
+						+ "ticketID int  AUTO_INCREMENT,\r\n"
+						+ "StudentID int NOT NULL,\r\n"
+						+ "supportTag VARCHAR(50),\r\n"
+						+ "Text_content VARCHAR(200),\r\n"
+						+ "publishDate VARCHAR(30),\r\n"
+						+ "PRIMARY KEY(TicketID),\r\n"
+						+ "Foreign key(StudentID) References Student(user_id) on delete cascade on update cascade\r\n"
+						+ ");";
+				statement.executeUpdate(StudentSupportDDL);
 				
 				connection.close();
 				

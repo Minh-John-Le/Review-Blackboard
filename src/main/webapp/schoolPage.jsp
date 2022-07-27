@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="Beans.School, Beans.SchoolReview, Beans.SchoolReviewComment, 
-    dao.SchoolReviewCommentDAO, Beans.StudentUser, Beans.ProfessorUser, java.util.*, java.sql.Date"%>
+    DAO.SchoolReviewCommentDAO, Beans.StudentUser, Beans.ProfessorUser, java.util.*, java.sql.Date"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="ISO-8859-1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css" />
-<title><% School school = (School)request.getAttribute("school"); 
+<title><% School school = (School)session.getAttribute("school"); 
 out.println(school.getName() + " Reviews");%></title>
 <style>
   .review {
@@ -64,7 +64,7 @@ out.println(school.getName() + " Reviews");%></title>
       </form>
  	  </span>  
       <h1><%
-      ArrayList<SchoolReview> reviews = (ArrayList<SchoolReview>)request.getAttribute("reviews");
+      ArrayList<SchoolReview> reviews = (ArrayList<SchoolReview>)ses.getAttribute("reviews");
       		 out.println(school.getName());%></h1>
       <h2>Average Quality Rating: <% 
       double average = 0;

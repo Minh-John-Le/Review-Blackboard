@@ -52,16 +52,24 @@
 
 
 <!-- Review filter-->  
-  <div class="container"> 
-    <form id="Sign-up-form" action = "reportProfessorReviewServlet" method="post">
-	<h1> Report Ticket</h1>
-      
+  <div class="container">
+ 	
+ 
+    <form id="Sign-up-form" action = "supportTicketServlet" method="post">
+	<h1> Support Ticket</h1>
+    
+    <select id = "supportTag" name = "supportTag">  
+          <option> ---Issue Tag--- </option>  
+          <option> Account </option>  
+          <option> Bugs </option> 
+          <option> Feedback</option>
+          <option> Security</option>
+               
+    </select>
+    
 	<div>
 		<textarea class = "textarea" name="textContent" id="message" ></textarea>
 	</div>
-   
-
-      
       <span>
          <input type="submit" value="Submit" name = "Button">
       </span>

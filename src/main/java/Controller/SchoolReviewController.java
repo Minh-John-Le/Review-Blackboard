@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.SchoolDAO;
-import dao.SchoolReviewDAO;
+import DAO.SchoolDAO;
+import DAO.SchoolReviewDAO;
 import Beans.ProfessorUser;
+import Beans.School;
 import Beans.SchoolReview;
 import Beans.StudentUser;
 
@@ -36,6 +37,9 @@ public class SchoolReviewController extends HttpServlet {
 		int infrastructure = Integer.parseInt(request.getParameter("infrastructure"));
 		Date year = Date.valueOf(request.getParameter("year"));
 		int schoolId = Integer.parseInt(request.getParameter("schoolId"));
+		schoolId = ((School) session.getAttribute("school")).getSchoolId();
+		System.out.println("school ID is " +schoolId);
+		
 		int author;
 		
 		
@@ -48,7 +52,7 @@ public class SchoolReviewController extends HttpServlet {
 			ProfessorUser curUser = (ProfessorUser)session.getAttribute("currentProfessorUser");
 			author = curUser.getId();
 		}
-		
+		System.out.println("authorID is =" + author);
 		SchoolReview schoolReview = new SchoolReview();
 		schoolReview.setYear(year);
 		schoolReview.setBody(body);
@@ -59,7 +63,7 @@ public class SchoolReviewController extends HttpServlet {
 		schoolReview.setQuality(quality);
 		schoolReview.setInfrastructure(infrastructure);
 		
-		if (dao.findSchoolReviewByAuthor(author) != null && dao.findSchoolReviewByAuthor(author).getSchoolId() == schoolId) {
+		if (dao.findSchoolReviewByAuthor(author, schoolId) != null) {
 			dao.update(schoolReview);
 		}
 		else {

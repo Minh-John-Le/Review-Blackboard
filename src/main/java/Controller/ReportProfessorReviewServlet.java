@@ -121,14 +121,34 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 			
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			//Statement statement = connection.createStatement();
+			/*
+			Statement statement = connection.createStatement();
+			String searchReportSql = "SELECT * \n"
+					+ "FROM Stud_reports_Prev R \n"
+					+ "WHERE R.sid ='" + author + "' AND\n"
+					+ " prid = '" + reviewID + "';";
+			
+			ResultSet searchResult = statement.executeQuery(searchReportSql);
+			
+			if(searchResult.next())
+			{
+				String updateReport = "UPDATE Stud_reports_Prev \n"
+						+ "SET text_cont = '"+ content + "', \n"
+						+ "report_date = '" + todayString + "'\n"
+						+ "WHERE sid ='" + author + "' AND\n"
+						+ "prid = '" + reviewID + "';";
+				statement.executeUpdate(updateReport);
+				connection.close();
+				return;
+			}
+			*/
 			String insertReportsql = "INSERT INTO Stud_reports_Prev(sid, prid, text_cont, report_date) \n"
 					+ "VALUES(?,?,?,?);";
 			
 			PreparedStatement insertReportStmt = connection.prepareStatement(insertReportsql);
 			
-			insertReportStmt.setString(1, reviewID);
-			insertReportStmt.setString(2, author);
+			insertReportStmt.setString(1, author);
+			insertReportStmt.setString(2, reviewID);
 			insertReportStmt.setString(3, content);
 			insertReportStmt.setString(4, todayString);
 			
