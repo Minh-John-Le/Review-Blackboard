@@ -8,6 +8,20 @@ public class School {
 	private String zip;
 	private int schoolId;
 	
+	public School()
+	{
+		
+	}
+	
+	public School(String name, String street, String city, String state, String zip, int schoolId)
+	{
+		this.name = name;
+		this.street = street;
+		this.city = city;
+		this.zip = zip;
+		this.state = state;
+		this.schoolId = schoolId;
+	}
 	
 	public String getName() {
 		return name;

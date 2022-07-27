@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import DAO.SchoolDAO;
 import DAO.SchoolReviewDAO;
 import Beans.ProfessorUser;
+import Beans.School;
 import Beans.SchoolReview;
 import Beans.StudentUser;
 
@@ -36,6 +37,8 @@ public class SchoolReviewController extends HttpServlet {
 		int infrastructure = Integer.parseInt(request.getParameter("infrastructure"));
 		Date year = Date.valueOf(request.getParameter("year"));
 		int schoolId = Integer.parseInt(request.getParameter("schoolId"));
+		schoolId = ((School) session.getAttribute("school")).getSchoolId();
+		System.out.println("school ID is " +schoolId);
 		int author;
 		
 		

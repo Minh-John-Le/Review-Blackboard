@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import Beans.Professor;
+import Beans.School;
 
 /**
  * Servlet implementation class HomeServlet
@@ -89,17 +90,31 @@ public class HomeServlet extends HttpServlet {
 
 		try {
 					
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			
 			
 			if (clickButton.equals("Search School")) {
-				RequestDispatcher rd = request.getRequestDispatcher("/collegeSearchServlet");
-				rd.forward(request, response);
+				
+				LinkedList<School> searchSchool = this.SearchSchool(school);
+				
+				if(!searchSchool.isEmpty())
+				{
+					session.setAttribute("searchSchoolList", searchSchool);
+					RequestDispatcher requestDispatcher = request.getRequestDispatcher("schoolSearchResult.jsp");		
+					requestDispatcher.forward(request, response);
+					return;
+				}
+				
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+				requestDispatcher.include(request, response);
+				return;
+				
 			}
 			
 			else if(clickButton.equals("Search Professor"))
 			{
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
+						context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
 				Statement statement = connection.createStatement();
 				String searchProfessorsql = "SELECT *\r\n"
 						+ "FROM professor P\r\n"
@@ -144,5 +159,46 @@ public class HomeServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private LinkedList<School> SearchSchool (String schoolName)
+	{
+		LinkedList<School> schoolList = new LinkedList<School>();
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
+					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			Statement statement = connection.createStatement();
+			String searchSchoolsql = "SELECT *\r\n"
+					+ "FROM school S\r\n"
+					+ "WHERE S.sname LIKE '" + schoolName +"%' ;";
+			
+			ResultSet SchoolSearchResult = statement.executeQuery(searchSchoolsql);
+
+			while(SchoolSearchResult.next())
+			{
+				int schoolID = SchoolSearchResult.getInt("school_id");
+				String sname = SchoolSearchResult.getString("sname");
+				String street = SchoolSearchResult.getString("street");
+				String city = SchoolSearchResult.getString("city");
+				String state = SchoolSearchResult.getString("state");		
+				String zipcode = SchoolSearchResult.getString("zipcode");
+				
+				
+				School school = new School(sname,street,city,state,zipcode,schoolID);
+				schoolList.add(school);
+				
+			}
+			connection.close();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return schoolList;
 	}
 }
