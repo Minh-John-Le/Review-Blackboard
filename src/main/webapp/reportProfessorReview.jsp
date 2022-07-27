@@ -52,17 +52,7 @@
 
 
 <!-- Review filter-->  
-  <div class="container">
- 	<span class = "heading">
- 		<input type="submit" value="Review Blackboard" name = "Button">
- 			
- 	</span>
- 	<span class = heading_right>
- 		Hello, Minh Le 
- 		<input type="submit" value="Log Out" name = "Button">
- 	</span>
- 	
- 
+  <div class="container"> 
     <form id="Sign-up-form" action = "reportProfessorReviewServlet" method="post">
 	<h1> Report Ticket</h1>
       
