@@ -121,6 +121,7 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 			
 			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
 					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+			/*
 			Statement statement = connection.createStatement();
 			String searchReportSql = "SELECT * \n"
 					+ "FROM Stud_reports_Prev R \n"
@@ -140,7 +141,7 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 				connection.close();
 				return;
 			}
-			
+			*/
 			String insertReportsql = "INSERT INTO Stud_reports_Prev(sid, prid, text_cont, report_date) \n"
 					+ "VALUES(?,?,?,?);";
 			
