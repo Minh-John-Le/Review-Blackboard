@@ -2,6 +2,7 @@ package Controller;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -37,8 +38,8 @@ public class SchoolReviewCommentController extends HttpServlet {
 		String body = request.getParameter("body");
 		int scrId = Integer.parseInt(request.getParameter("scrId"));
 		Date year = Date.valueOf(request.getParameter("year"));
-		ProfessorUser curUser = (ProfessorUser)session.getAttribute("currentProfessorUser");
-		int professor = curUser.getId();
+		int professor = (int) session.getAttribute("userId");
+		boolean commented = false;
 		
 		SchoolReviewComment src = new SchoolReviewComment();
 		src.setScrId(scrId);
@@ -46,7 +47,18 @@ public class SchoolReviewCommentController extends HttpServlet {
 		src.setDate(year);
 		src.setBody(body);
 		
-		dao.save(src);
+		if (dao.findSchoolReviewCommentByAuthor(professor) != null) {
+			ArrayList<SchoolReviewComment> comments = dao.findSchoolReviewCommentByAuthor(professor);
+			for (SchoolReviewComment comment : comments) {
+				if (comment.getScrId() == scrId) {
+					dao.update(src);
+					commented = true;
+				}
+			}
+		}
+		if (commented == false) {
+			dao.save(src);
+		}
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/schoolReviewCommentPage.jsp");
 		SchoolReview review = schoolReviewDao.findSchoolReviewById(scrId);

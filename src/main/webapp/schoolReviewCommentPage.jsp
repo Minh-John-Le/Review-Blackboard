@@ -60,7 +60,7 @@
       <input type="submit" value="Log Out">
       </form>
  	  </span>
-<h1>Comment successfully added!</h1>
+<h1>Comment successfully added/updated!</h1>
 </div>
 </main>
 </body>

@@ -36,23 +36,10 @@ public class SchoolReviewController extends HttpServlet {
 		int location = Integer.parseInt(request.getParameter("location"));
 		int infrastructure = Integer.parseInt(request.getParameter("infrastructure"));
 		Date year = Date.valueOf(request.getParameter("year"));
-		int schoolId = Integer.parseInt(request.getParameter("schoolId"));
-		schoolId = ((School) session.getAttribute("school")).getSchoolId();
-		System.out.println("school ID is " +schoolId);
+//		int schoolId = Integer.parseInt(request.getParameter("schoolId"));
+		int schoolId = ((School) session.getAttribute("school")).getSchoolId();
+		int author = (int) session.getAttribute("userId");
 		
-		int author;
-		
-		
-		if (session.getAttribute("userRole").equals("student")) {
-			StudentUser curUser = (StudentUser)session.getAttribute("currentStudentUser");
-			author = curUser.getId();
-		}
-		
-		else {
-			ProfessorUser curUser = (ProfessorUser)session.getAttribute("currentProfessorUser");
-			author = curUser.getId();
-		}
-		System.out.println("authorID is =" + author);
 		SchoolReview schoolReview = new SchoolReview();
 		schoolReview.setYear(year);
 		schoolReview.setBody(body);
@@ -63,7 +50,7 @@ public class SchoolReviewController extends HttpServlet {
 		schoolReview.setQuality(quality);
 		schoolReview.setInfrastructure(infrastructure);
 		
-		if (dao.findSchoolReviewByAuthor(author, schoolId) != null) {
+		if (dao.findSchoolReviewByAuthor(author, schoolId) != null && dao.findSchoolReviewByAuthor(author, schoolId).getSchoolId() == schoolId) {
 			dao.update(schoolReview);
 		}
 		else {
