@@ -59,7 +59,7 @@ public class SchoolReviewController extends HttpServlet {
 		schoolReview.setQuality(quality);
 		schoolReview.setInfrastructure(infrastructure);
 		
-		if (dao.findSchoolReviewByAuthor(author) != null) {
+		if (dao.findSchoolReviewByAuthor(author) != null && dao.findSchoolReviewByAuthor(author).getSchoolId() == schoolId) {
 			dao.update(schoolReview);
 		}
 		else {
