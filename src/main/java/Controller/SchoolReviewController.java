@@ -39,6 +39,7 @@ public class SchoolReviewController extends HttpServlet {
 		int schoolId = Integer.parseInt(request.getParameter("schoolId"));
 		schoolId = ((School) session.getAttribute("school")).getSchoolId();
 		System.out.println("school ID is " +schoolId);
+		
 		int author;
 		
 		
@@ -51,7 +52,7 @@ public class SchoolReviewController extends HttpServlet {
 			ProfessorUser curUser = (ProfessorUser)session.getAttribute("currentProfessorUser");
 			author = curUser.getId();
 		}
-		
+		System.out.println("authorID is =" + author);
 		SchoolReview schoolReview = new SchoolReview();
 		schoolReview.setYear(year);
 		schoolReview.setBody(body);
@@ -62,7 +63,7 @@ public class SchoolReviewController extends HttpServlet {
 		schoolReview.setQuality(quality);
 		schoolReview.setInfrastructure(infrastructure);
 		
-		if (dao.findSchoolReviewByAuthor(author) != null) {
+		if (dao.findSchoolReviewByAuthor(author, schoolId) != null) {
 			dao.update(schoolReview);
 		}
 		else {

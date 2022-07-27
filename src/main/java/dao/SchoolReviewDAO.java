@@ -100,7 +100,7 @@ public class SchoolReviewDAO {
 		return reviews;
 	}
 	
-	public SchoolReview findSchoolReviewByAuthor(int author) {
+	public SchoolReview findSchoolReviewByAuthor(int author, int schoolID) {
 		SchoolReview schoolReview = null;
 		
 		try {
@@ -111,8 +111,9 @@ public class SchoolReviewDAO {
 
 			Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 			
-			PreparedStatement stmt = con.prepareStatement("select * from school_reviews where author=?");
+			PreparedStatement stmt = con.prepareStatement("select * from school_reviews where author=? AND school_id = ?;");
 			stmt.setInt(1, author);
+			stmt.setInt(2, schoolID);
 			ResultSet rs = stmt.executeQuery();
 			
 			while (rs.next()) {
