@@ -223,49 +223,52 @@ out.println(school.getName() + " Reviews");%></title>
         <input type="text" name="schoolId" value="<%=school.getSchoolId() %>" hidden />
         <input type="submit" value="Search" />
       </form>
-      <form action="schoolReviews" method="post">
-        <h3>Add a Review</h3>
-        <textarea rows="5" cols="50" name="body"> </textarea>
-        <br />
-        <label for="reviewQuality">Quality:</label>
-        <select name="quality" id="reviewQuality">
-          <option value="5" selected>5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-          <option value="1">1</option>
-        </select>
-        <label for="reviewSafety">Safety:</label>
-        <select name="safety" id="reviewSafety">
-          <option value="5" selected>5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-          <option value="1">1</option>
-        </select>
-        <label for="reviewLocation">Location:</label>
-        <select name="location" id="reviewLocation">
-          <option value="5" selected>5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-          <option value="1">1</option>
-        </select>
-        <label for="reviewInfrastructure">Infrastructure:</label>
-        <select name="infrastructure" id="reviewInfrastructure">
-          <option value="5" selected>5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-          <option value="1">1</option>
-        </select>
-        <br />
-
-        <input type="text" name="year" value="<%= new Date(new java.util.Date().getTime()) %>" hidden />
-        <br />
-        <input type="text" name="schoolId" value="<%=school.getSchoolId() %>" hidden />
-        <input type="submit" value="submit" />
-      </form>
+<%
+      if (ses.getAttribute("userRole").equals("student")) {
+    	  out.println("<form action=\"schoolReviews\" method=\"post\">");
+    	  out.println("<h3>Add a Review</h3>");
+    	  out.println("<textarea rows=\"5\" cols=\"50\" name=\"body\"> </textarea>");
+    	  out.println("<br />");
+    	  out.println("<label for=\"reviewQuality\">Quality:</label>");
+    	  out.println("<select name=\"quality\" id=\"reviewQuality\">");
+    	  out.println("<option value=\"5\" selected>5</option>");
+    	  out.println("<option value=\"4\">4</option>");
+    	  out.println("<option value=\"3\">3</option>");
+    	  out.println("<option value=\"2\">2</option>");
+    	  out.println("<option value=\"1\">1</option>");
+    	  out.println("</select>");
+    	  out.println("<label for=\"reviewSafety\">Safety:</label>");
+    	  out.println("<select name=\"safety\" id=\"reviewSafety\">");
+    	  out.println("<option value=\"5\" selected>5</option>");
+    	  out.println("<option value=\"4\">4</option>");
+    	  out.println("<option value=\"3\">3</option>");
+    	  out.println("<option value=\"2\">2</option>");
+    	  out.println("<option value=\"1\">1</option>");
+    	  out.println("</select>");
+    	  out.println("<label for=\"reviewLocation\">Location:</label>");
+    	  out.println("<select name=\"location\" id=\"reviewLocation\">");
+    	  out.println("<option value=\"5\" selected>5</option>");
+    	  out.println("<option value=\"4\">4</option>");
+    	  out.println("<option value=\"3\">3</option>");
+    	  out.println("<option value=\"2\">2</option>");
+    	  out.println("<option value=\"1\">1</option>");
+    	  out.println("</select>");
+    	  out.println("<label for=\"reviewInfrastructure\">Infrastructure:</label>");
+    	  out.println("<select name=\"infrastructure\" id=\"reviewInfrastructure\">");
+    	  out.println("<option value=\"5\" selected>5</option>");
+    	  out.println("<option value=\"4\">4</option>");
+    	  out.println("<option value=\"3\">3</option>");
+    	  out.println("<option value=\"2\">2</option>");
+    	  out.println("<option value=\"1\">1</option>");
+    	  out.println("</select>");
+    	  out.println("<br />");
+    	  out.println("<input type=\"text\" name=\"year\" value=\"" + new Date(new java.util.Date().getTime()) + "\" hidden />");
+    	  out.println("<br />");
+    	  out.println("<input type=\"text\" name=\"schoolId\" value=\"" + school.getSchoolId() + "\" hidden />");
+    	  out.println("<input type=\"submit\" value=\"submit\" />");
+    	  out.println("</form>");
+      }
+      %>
       <div class="college-reviews">
       <hr>
         <% 

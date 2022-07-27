@@ -138,6 +138,7 @@ public class LogInServlet extends HttpServlet {
 				session.setAttribute("currentStudentUser", currentStudentUser);
 				session.setAttribute("currentProfessorUser", null);
 				session.setAttribute("name", fNameString + " " + lNameString);
+				session.setAttribute("userId", currentStudentUser.getId());
 				
 				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
 				requestDispatcher.forward(request, response);
@@ -164,6 +165,7 @@ public class LogInServlet extends HttpServlet {
 				session.setAttribute("currentStudentUser", null);
 				session.setAttribute("currentProfessorUser", currentProfessorUser);
 				session.setAttribute("name", fNameString + " " + lNameString);
+				session.setAttribute("userId", currentProfessorUser.getId());
 				
 				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
 				requestDispatcher.forward(request, response);

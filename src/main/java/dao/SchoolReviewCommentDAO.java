@@ -33,6 +33,25 @@ public class SchoolReviewCommentDAO {
 		}
 	}
 	
+	public void update(SchoolReviewComment comment) {
+		try {
+			InitialContext initialContext = new InitialContext();
+			String dbUrl = (String) initialContext.lookup("java:comp/env/dbUrl");
+			String dbUser = (String) initialContext.lookup("java:comp/env/dbUser");
+			String dbPassword = (String) initialContext.lookup("java:comp/env/dbPassword");
+			Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+
+			PreparedStatement stmt = con.prepareStatement("update comm_school_rev set pub_date=?, text_cont=? where professor=? and scrid=?");
+			stmt.setDate(1, comment.getDate());
+			stmt.setString(2, comment.getBody());
+			stmt.setInt(3, comment.getProfessor());
+			stmt.setInt(4, comment.getScrId());
+			stmt.executeUpdate();
+		} catch (SQLException | NamingException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public ArrayList<SchoolReviewComment> findSchoolReviewComments(int scrId) {
 		ArrayList<SchoolReviewComment> comments = new ArrayList<>();
 		
@@ -64,6 +83,37 @@ public class SchoolReviewCommentDAO {
 		
 		return comments;
 		
+	}
+	
+	public ArrayList<SchoolReviewComment> findSchoolReviewCommentByAuthor(int professor) {
+		ArrayList<SchoolReviewComment> comments = new ArrayList<>();
+		
+		try {
+			InitialContext initialContext = new InitialContext();
+			String dbUrl = (String) initialContext.lookup("java:comp/env/dbUrl");
+			String dbUser = (String) initialContext.lookup("java:comp/env/dbUser");
+			String dbPassword = (String) initialContext.lookup("java:comp/env/dbPassword");
+
+			Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+			
+			PreparedStatement stmt = con.prepareStatement("select * from comm_school_rev where professor=?");
+			stmt.setInt(1, professor);
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				SchoolReviewComment comment = new SchoolReviewComment();
+				comment.setScrId(rs.getInt(1));
+				comment.setProfessor(rs.getInt(2));
+				comment.setDate(rs.getDate(3));
+				comment.setBody(rs.getString(4));
+				comments.add(comment);
+			}
+			
+		} catch (SQLException | NamingException e) {
+			e.printStackTrace();
+		}
+		
+		return comments;
 	}
 	
 }

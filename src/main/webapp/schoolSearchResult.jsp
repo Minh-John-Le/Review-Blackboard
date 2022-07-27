@@ -72,7 +72,7 @@
  		<input type="submit" value="Log Out" name = "Button">
  	</span>
  	
-    <h1>Professor Search Result</h1>
+    <h1>School Search Result</h1>
     
       <table style = "margin-left: 200px">
   		<tr>
