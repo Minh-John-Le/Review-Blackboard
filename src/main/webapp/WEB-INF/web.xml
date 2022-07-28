@@ -20,11 +20,11 @@
   </context-param>
   <context-param>
   	<param-name>dbUser</param-name>
-  	<param-value>root</param-value>
+  	<param-value>dbuser</param-value>
   </context-param>
   <context-param>
   	<param-name>dbPassword</param-name>
-  	<param-value>oracle</param-value>
+  	<param-value>dbpassword</param-value>
   </context-param>
   
   
@@ -52,13 +52,13 @@
   <env-entry> 
     <env-entry-name>dbUser</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>root</env-entry-value> 
+    <env-entry-value>dbuser</env-entry-value> 
   </env-entry>
   
   <env-entry> 
     <env-entry-name>dbPassword</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>oracle</env-entry-value> 
+    <env-entry-value>dbpassword</env-entry-value> 
   </env-entry>
   
 </web-app>
