@@ -36,9 +36,10 @@ public class SchoolReviewController extends HttpServlet {
 		int location = Integer.parseInt(request.getParameter("location"));
 		int infrastructure = Integer.parseInt(request.getParameter("infrastructure"));
 		Date year = Date.valueOf(request.getParameter("year"));
-//		int schoolId = Integer.parseInt(request.getParameter("schoolId"));
 		int schoolId = ((School) session.getAttribute("school")).getSchoolId();
 		int author = (int) session.getAttribute("userId");
+		int attFrom = Integer.parseInt(request.getParameter("attFromYear"));
+		int attTo = Integer.parseInt(request.getParameter("attToYear"));
 		
 		SchoolReview schoolReview = new SchoolReview();
 		schoolReview.setYear(year);
@@ -49,6 +50,8 @@ public class SchoolReviewController extends HttpServlet {
 		schoolReview.setSafety(safety);
 		schoolReview.setQuality(quality);
 		schoolReview.setInfrastructure(infrastructure);
+		schoolReview.setAttFromYear(attFrom);
+		schoolReview.setAttToYear(attTo);
 		
 		if (dao.findSchoolReviewByAuthor(author, schoolId) != null && dao.findSchoolReviewByAuthor(author, schoolId).getSchoolId() == schoolId) {
 			dao.update(schoolReview);

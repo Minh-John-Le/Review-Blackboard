@@ -133,9 +133,7 @@ public class ProfessorSearchResultServlet extends HttpServlet {
 				{
 					comment = "";
 				}
-				
-				System.out.println(" reviewID is --" + reviewIDString);
-				
+								
 				ProfessorReview review = new ProfessorReview(reviewIDString, contentString, profID, quality, difficulty, course_name, 
 						class_type,grade, year, semester,comment);
 				reviewList.add(review);

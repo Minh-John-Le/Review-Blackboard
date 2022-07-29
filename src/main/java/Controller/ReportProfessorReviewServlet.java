@@ -57,9 +57,7 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 			requestDispatcher.forward(request, response);	
 
 		}
-		
-		System.out.println(textCont);
-		
+				
 		if (textCont == null || textCont.equals(""))
 		{
 			errlist.add("Report content cannot be empty!");
@@ -84,10 +82,6 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 			
 			reportReview(currentReport,studentID,textCont);		
 		}
-		
-		
-		
-		
 			
 		Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
 		String Id = String.valueOf(selectedProfessor.getUser_ID());
@@ -99,10 +93,7 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 		
 		session.setAttribute("selectedProfessor", selectedProfessor);
 		LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
-		System.out.println(reviewList.size());
 		session.setAttribute("professorReview", reviewList);
-		
-		
 		
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
 		requestDispatcher.forward(request, response);

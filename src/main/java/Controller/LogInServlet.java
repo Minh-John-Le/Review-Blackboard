@@ -110,7 +110,7 @@ public class LogInServlet extends HttpServlet {
 			}
 			else
 			{
-				errList.add("Username or Password is inccorect!");
+				errList.add("Username or Password is incorrect!");
 			} 
 			
 			
@@ -148,8 +148,6 @@ public class LogInServlet extends HttpServlet {
 			
 			if(session.getAttribute("userRole").equals("professor"))
 			{
-				
-				System.out.println("Professor User log in sucess");
 				int idString = professorSearchResult.getInt("user_id");
 				String passwordString = professorSearchResult.getString("pw");
 				String emailString = professorSearchResult.getString("email");
@@ -158,8 +156,6 @@ public class LogInServlet extends HttpServlet {
 				String schoolString = professorSearchResult.getString("schoolName");
 				String deparmentString = professorSearchResult.getString("department");
 				
-				System.out.println("user Id is " + idString);
-
 				ProfessorUser currentProfessorUser = new ProfessorUser(idString, passwordString, emailString,fNameString,lNameString,schoolString,deparmentString);
 				
 				session.setAttribute("currentStudentUser", null);

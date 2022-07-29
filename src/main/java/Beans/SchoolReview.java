@@ -12,6 +12,8 @@ public class SchoolReview {
 	private int schoolId;
 	private int scrId;
 	private int author;
+	private int attFromYear;
+	private int attToYear;
 	
 	public String getBody() {
 		return body;
@@ -66,5 +68,17 @@ public class SchoolReview {
 	}
 	public void setAuthor(int author) {
 		this.author = author;
+	}
+	public int getAttFromYear() {
+		return attFromYear;
+	}
+	public void setAttFromYear(int attFromYear) {
+		this.attFromYear = attFromYear;
+	}
+	public int getAttToYear() {
+		return attToYear;
+	}
+	public void setAttToYear(int attToYear) {
+		this.attToYear = attToYear;
 	}
 }

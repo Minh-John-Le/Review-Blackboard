@@ -45,8 +45,8 @@
 String name = (String)request.getAttribute("name");%>
 <div class="container">
  <span class = "heading">
-      <form action="/Review_Blackboard/homePage.jsp">
-      <input type="submit" value="Review Blackboard"/>
+      <form action="homeServlet">
+      <input type="submit" value="Review Blackboard" name="Button"/>
       </form>
       <form action="collegeSearchServlet" method="get">
       <input type="hidden" name="school" value="<%= name %>">
@@ -78,11 +78,16 @@ String name = (String)request.getAttribute("name");%>
 			out.println("<span class=\"tab\">");
 			out.println("<b>Infrastructure:</b> " + review.getInfrastructure());
 			out.println("</span>");
-			out.println("<span class=\"tab\">");
+			out.println("<br />");
+			out.println("<span>");
 			out.println("<b>Date posted:</b> " + review.getYear());
-			out.println("</span>");			
-			out.println("<br />");
-			out.println("<br />");
+			out.println("</span>");
+			out.println("<span class=\"tab\">");
+			out.println("<b>Attended from year:</b> " + review.getAttFromYear());
+			out.println("</span>");		
+			out.println("<span class=\"tab\">");
+			out.println("<b>Attended to year:</b> " + review.getAttToYear());
+			out.println("</span>");	
 			out.println("<blockquote class=\"review\">");
 			out.println(review.getBody());
 			out.println("</blockquote>");

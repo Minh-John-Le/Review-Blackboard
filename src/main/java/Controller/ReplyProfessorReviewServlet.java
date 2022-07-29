@@ -59,9 +59,7 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 			requestDispatcher.forward(request, response);	
 
 		}
-		
-		System.out.println(textCont);
-		
+				
 		if (textCont == null || textCont.equals(""))
 		{
 			errlist.add("Report content cannot be empty!");
@@ -95,7 +93,6 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 		
 		session.setAttribute("selectedProfessor", selectedProfessor);
 		LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
-		System.out.println(reviewList.size());
 		session.setAttribute("professorReview", reviewList);
 		
 		
