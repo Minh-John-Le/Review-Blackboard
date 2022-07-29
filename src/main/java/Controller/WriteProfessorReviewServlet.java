@@ -32,13 +32,9 @@ import DAO.ProfessorReviewDAO;
 @WebServlet("/writeProfessorReviewServlet")
 public class WriteProfessorReviewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ServletContext context;
+	
 	private ProfessorReviewDAO professorReviewDAO = new ProfessorReviewDAO();
 	
-	public void init(ServletConfig config)
-	{				
-		context = config.getServletContext();		
-	}
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String clickButton = request.getParameter("Button");
@@ -71,8 +67,7 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 		String textContent = request.getParameter("textContent").trim();
 		int userID = studentUser.getId();
 		int professorID = professor.getUser_ID();
-		LocalDateTime today = LocalDateTime.now();
-		String todayString = today.toString();
+		
 
 		LinkedList<String> errlist = new LinkedList<String>();
 		
@@ -127,111 +122,29 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 			return;
 		}
 		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			Statement statement = connection.createStatement();
-			String searchReviewsql = "SELECT COUNT(P.author)\r\n"
-					+ "FROM Prof_Reviews P \n"
-					+ "WHERE P.author = '" + userID + "' \n"
-					+ "AND P.prof = '" + professorID + "';";
-			
-			ResultSet searchResult = statement.executeQuery(searchReviewsql);
-			int countResult = 0;
-			if(searchResult.next())
-			{
-				 countResult= searchResult.getInt(1);
-			}
-			
-			if(countResult < 1)
-			{
-											
-				String addReviewsql = "INSERT INTO Prof_Reviews(pub_date,text_cont, author, "
-						+ "prof, quality,difficulty, "
-						+ "course_name, class_type, grade, Pyear, semester) \n"
-						+ "VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+	
+		professorReviewDAO.AddProfessorReview(userID, professorID, textContent, quality, difficulty,
+				course, classStyle, grade, year, semester);
+		
 				
-				PreparedStatement addReviewPstmt = connection.prepareStatement(addReviewsql);
-				
-				addReviewPstmt.setString(1, todayString);
-				addReviewPstmt.setString(2, textContent);	
-				addReviewPstmt.setInt(3, userID);
-				addReviewPstmt.setInt(4, professorID);
-				addReviewPstmt.setString(5, quality);
-				addReviewPstmt.setString(6, difficulty);
-				addReviewPstmt.setString(7, course );
-				addReviewPstmt.setString(8, classStyle );			
-				addReviewPstmt.setString(9, grade );
-				addReviewPstmt.setString(10, year );
-				addReviewPstmt.setString(11, semester);
-				
-				addReviewPstmt.executeUpdate();
-				
-			}
-			
-			else
-			{
+		Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
+		String Id = String.valueOf(selectedProfessor.getUser_ID());
+		double avgD = professorReviewDAO.AvgProfessorDifficulty(Id);
+		double avgQ = professorReviewDAO.AvgProfessorQuality(Id);
+		
+		selectedProfessor.setAvgDifficulty(avgD);
+		selectedProfessor.setAvgQuality(avgQ);
+		
+		session.setAttribute("selectedProfessor", selectedProfessor);
+		LinkedList<ProfessorReview> reviewList = professorReviewDAO.ProfessorReviewList(Id);
+		session.setAttribute("professorReview", reviewList);
+		
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
+		requestDispatcher.forward(request, response);
 
-				String addReviewsql = "UPDATE Prof_Reviews PR\n"
-						+ "SET PR.pub_date = ? , \n"
-						+ "PR.text_cont = ?, \n"
-						+ "PR.author = ?, \n "
-						+ "PR.prof = ?, \n"
-						+ "PR.quality = ?, \n"
-						+ "PR.difficulty = ?, \n"
-						+ "PR.course_name = ?, \n"
-						+ "PR.class_type = ?, \n"
-						+ "PR.grade = ?, \n"
-						+ "PR.Pyear = ?, \n"
-						+ "PR.semester = ? \n"
-						+ "WHERE PR.author = '" + userID + "' AND \n"
-						+ "PR.prof = '" + professorID + "';";
-						
-				
-				PreparedStatement addReviewPstmt = connection.prepareStatement(addReviewsql);
-				
-				addReviewPstmt.setString(1, todayString);
-				addReviewPstmt.setString(2, textContent);	
-				addReviewPstmt.setInt(3, userID);
-				addReviewPstmt.setInt(4, professorID);
-				addReviewPstmt.setString(5, quality);
-				addReviewPstmt.setString(6, difficulty);
-				addReviewPstmt.setString(7, course );
-				addReviewPstmt.setString(8, classStyle );			
-				addReviewPstmt.setString(9, grade );
-				addReviewPstmt.setString(10, year );
-				addReviewPstmt.setString(11, semester);
-				
-				addReviewPstmt.executeUpdate();
-				
-			}
-			
-					
-			Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
-			String Id = String.valueOf(selectedProfessor.getUser_ID());
-			double avgD = professorReviewDAO.AvgProfessorDifficulty(Id);
-			double avgQ = professorReviewDAO.AvgProfessorQuality(Id);
-			
-			selectedProfessor.setAvgDifficulty(avgD);
-			selectedProfessor.setAvgQuality(avgQ);
-			
-			session.setAttribute("selectedProfessor", selectedProfessor);
-			LinkedList<ProfessorReview> reviewList = professorReviewDAO.ProfessorReviewList(Id);
-			session.setAttribute("professorReview", reviewList);
-			
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
-			requestDispatcher.forward(request, response);
-			connection.close();
-			return;
+		return;
 
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		
 	}
 
