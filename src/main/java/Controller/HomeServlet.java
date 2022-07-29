@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import Beans.Professor;
 import Beans.School;
+import DAO.ProfessorDAO;
 
 /**
  * Servlet implementation class HomeServlet
@@ -27,6 +28,7 @@ import Beans.School;
 public class HomeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private ServletContext context;
+	private ProfessorDAO professorDAO = new ProfessorDAO();
 	
 	public void init(ServletConfig config)
 	{				
@@ -88,77 +90,43 @@ public class HomeServlet extends HttpServlet {
 		
 		}
 
-		try {
-					
+				
+		if (clickButton.equals("Search School")) {
 			
+			LinkedList<School> searchSchool = this.SearchSchool(school);
 			
-			if (clickButton.equals("Search School")) {
-				
-				LinkedList<School> searchSchool = this.SearchSchool(school);
-				
-				if(!searchSchool.isEmpty())
-				{
-					session.setAttribute("searchSchoolList", searchSchool);
-					RequestDispatcher requestDispatcher = request.getRequestDispatcher("schoolSearchResult.jsp");		
-					requestDispatcher.forward(request, response);
-					return;
-				}
-				
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
-				requestDispatcher.include(request, response);
-				return;
-				
-			}
-			
-			else if(clickButton.equals("Search Professor"))
+			if(!searchSchool.isEmpty())
 			{
-				Class.forName("com.mysql.cj.jdbc.Driver");
-				Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-						context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-				Statement statement = connection.createStatement();
-				String searchProfessorsql = "SELECT *\r\n"
-						+ "FROM professor P\r\n"
-						+ "WHERE P.fname LIKE '" + fname +"%' \r\n"
-						+ "AND P.lname LIKE '" + lname +"%' \r\n"
-						+ "AND P.schoolName Like '" + school + "%';";	
-				
-				ResultSet ProfessorSearchResult = statement.executeQuery(searchProfessorsql);
-
-				while(ProfessorSearchResult.next())
-				{
-					int user_IdString = ProfessorSearchResult.getInt("user_ID");
-					String fnameString =  ProfessorSearchResult.getString("fname");
-					String lnameString =  ProfessorSearchResult.getString("lname");
-					String schoolString = ProfessorSearchResult.getString("schoolName");
-					String emailString = ProfessorSearchResult.getString("email");
-					Professor professor = new Professor(user_IdString, fnameString, lnameString, schoolString,emailString);
-					professorList.add(professor);
-					
-					
-				}
-				
-				if (!professorList.isEmpty())
-				{
-					session.setAttribute("searchProfessorList", professorList);
-					RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorSearchResult.jsp");
-					requestDispatcher.include(request, response);
-					connection.close();
-					return;
-				}
-				
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
-				requestDispatcher.include(request, response);
-				connection.close();
-				
+				session.setAttribute("searchSchoolList", searchSchool);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("schoolSearchResult.jsp");		
+				requestDispatcher.forward(request, response);
+				return;
 			}
 			
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+			requestDispatcher.include(request, response);
+			return;
 			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 		
+		else if(clickButton.equals("Search Professor"))
+		{
+			professorList = professorDAO.SearchProfessor(fname, lname, school);
+			
+			if (!professorList.isEmpty())
+			{
+				session.setAttribute("searchProfessorList", professorList);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorSearchResult.jsp");
+				requestDispatcher.include(request, response);
+				
+				return;
+			}
+			
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+			requestDispatcher.include(request, response);
+			
+			
+		}	
 	}
 	
 	/**
