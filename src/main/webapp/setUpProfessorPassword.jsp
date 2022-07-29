@@ -28,7 +28,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Log In</h1>
+    <h1>Set Up Password</h1>
     <form id="Sign-up-form" action = "setUpProfessorPasswordServlet" method="post">
     <%
     	Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");

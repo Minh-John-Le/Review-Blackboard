@@ -1,15 +1,8 @@
 package Controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import Beans.Professor;
 import Beans.School;
 import DAO.ProfessorDAO;
+import DAO.SchoolDAO;
 
 /**
  * Servlet implementation class HomeServlet
@@ -27,13 +21,9 @@ import DAO.ProfessorDAO;
 @WebServlet("/homeServlet")
 public class HomeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ServletContext context;
 	private ProfessorDAO professorDAO = new ProfessorDAO();
+	private SchoolDAO schoolDAO = new SchoolDAO();
 	
-	public void init(ServletConfig config)
-	{				
-		context = config.getServletContext();		
-	}
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -93,7 +83,7 @@ public class HomeServlet extends HttpServlet {
 				
 		if (clickButton.equals("Search School")) {
 			
-			LinkedList<School> searchSchool = this.SearchSchool(school);
+			LinkedList<School> searchSchool = schoolDAO.SearchSchool(school);
 			
 			if(!searchSchool.isEmpty())
 			{
@@ -137,44 +127,5 @@ public class HomeServlet extends HttpServlet {
 	}
 
 	
-	private LinkedList<School> SearchSchool (String schoolName)
-	{
-		LinkedList<School> schoolList = new LinkedList<School>();
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			Statement statement = connection.createStatement();
-			String searchSchoolsql = "SELECT *\r\n"
-					+ "FROM school S\r\n"
-					+ "WHERE S.sname LIKE '" + schoolName +"%' ;";
-			
-			ResultSet SchoolSearchResult = statement.executeQuery(searchSchoolsql);
-
-			while(SchoolSearchResult.next())
-			{
-				int schoolID = SchoolSearchResult.getInt("school_id");
-				String sname = SchoolSearchResult.getString("sname");
-				String street = SchoolSearchResult.getString("street");
-				String city = SchoolSearchResult.getString("city");
-				String state = SchoolSearchResult.getString("state");		
-				String zipcode = SchoolSearchResult.getString("zipcode");
-				
-				
-				School school = new School(sname,street,city,state,zipcode,schoolID);
-				schoolList.add(school);
-				
-			}
-			connection.close();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		return schoolList;
-	}
+	
 }

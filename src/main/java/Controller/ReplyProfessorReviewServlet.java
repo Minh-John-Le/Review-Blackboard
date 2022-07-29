@@ -33,13 +33,10 @@ import DAO.ProfessorReviewDAO;
 @WebServlet("/replyProfessorReviewServlet")
 public class ReplyProfessorReviewServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ServletContext context;
-	private ProfessorReviewDAO professorReviewDAO = new ProfessorReivewDAO();
+
+	private ProfessorReviewDAO professorReviewDAO = new ProfessorReviewDAO();
 	
-	public void init(ServletConfig config)
-	{				
-		context = config.getServletContext();		
-	}
+
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String clickButton = request.getParameter("Button");
@@ -47,8 +44,8 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		String currentReport = (String) session.getAttribute("currentReport");
 		String textCont = request.getParameter("textContent").trim();
-		ProfessorUser professorUser = (ProfessorUser) session.getAttribute("currentProfessorUser"); 
-		String studentID = String.valueOf(professorUser.getId());
+		//ProfessorUser professorUser = (ProfessorUser) session.getAttribute("currentProfessorUser"); 
+		//String studentID = String.valueOf(professorUser.getId());
 		
 		Professor professor = (Professor) session.getAttribute("selectedProfessor");
 		String professorID = String.valueOf(professor.getUser_ID());
@@ -81,9 +78,7 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 			professorReviewDAO.replyReview(currentReport,professorID,textCont);		
 		}
 		
-		
-		
-		
+
 			
 		Professor selectedProfessor = (Professor) session.getAttribute("selectedProfessor");
 		String Id = String.valueOf(selectedProfessor.getUser_ID());
@@ -97,8 +92,7 @@ public class ReplyProfessorReviewServlet extends HttpServlet {
 		LinkedList<ProfessorReview> reviewList = professorReviewDAO.ProfessorReviewList(Id);
 		session.setAttribute("professorReview", reviewList);
 		
-		
-		
+
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
 		requestDispatcher.forward(request, response);
 		

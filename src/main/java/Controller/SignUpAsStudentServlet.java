@@ -22,10 +22,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
+import DAO.StudentDAO;
+
 @WebServlet("/signUpAsStudentServlet")
 public class SignUpAsStudentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private StudentDAO studentDAO = new StudentDAO();
 	ServletContext context;
 	
 	public void init(ServletConfig config)
@@ -42,99 +44,59 @@ public class SignUpAsStudentServlet extends HttpServlet {
 		
 
 		//===================
-		
-		
-		try {
+	
 			
-			
-			String clickButton = request.getParameter("Button");
-		
-		
-			// Return to Log In page if click cancel
-			if(clickButton.equals("Cancel"))
-			{
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
-				requestDispatcher.forward(request, response);
-				return;
-			}
-			
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-				
-			Statement statement = connection.createStatement();
-			String searchUsersql = "SELECT P.user_id \n"
-					+ "FROM Professor P \n"
-					+ "WHERE P.email = '" + email + "'" +""
-					+ "UNION \n"
-					+ "SELECT S.user_id \n"
-					+ "FROM Student S \n"
-					+ "WHERE S.email = '" + email + "';";
-					
-			
-			ResultSet resultSet = statement.executeQuery(searchUsersql);
-			
-			
-			List<String> errList = new LinkedList<String>();
-			
-			if(email.equals(""))
-			{
-				errList.add("Email cannot be empty!");
-			}
-			
-			if(password.equals(""))
-			{
-				errList.add("Password cannot be empty!");
-			}
-			
-			
-			if(lName.equals("") || lName.equals(""))
-			{
-				errList.add("Display name cannot be empty!");
-			}
-			
-			
-			if(resultSet.next())
-			{
-				errList.add("Username already exist!");
-			}
-			
-			if(!errList.isEmpty()) { //has some error
-				
-				request.setAttribute("errlist", errList);
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUpAsStudent.jsp");
-				requestDispatcher.forward(request, response);
-				connection.close();
-				return;
-			}
-		
-			//  Happy Flow success create new user
-			String signupUser = "INSERT INTO STUDENT (password, email, fname, lname, major)"
-					+ "VALUES(?,?,?,?,?);";
-			
-			PreparedStatement signupUserPstmt = connection.prepareStatement(signupUser);
-			
-			signupUserPstmt.setString(1, password);
-			signupUserPstmt.setString(2, email);
-			signupUserPstmt.setString(3, fName);
-			signupUserPstmt.setString(4, lName);
-			signupUserPstmt.setString(5, major);
-			
-			signupUserPstmt.executeUpdate();
-			
+		String clickButton = request.getParameter("Button");
+	
+	
+		// Return to Log In page if click cancel
+		if(clickButton.equals("Cancel"))
+		{
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
-			
-			
 			requestDispatcher.forward(request, response);
-			
-			
-			connection.close();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		
+			return;
 		}
+		
+		
+		List<String> errList = new LinkedList<String>();
+		
+		if(email.equals(""))
+		{
+			errList.add("Email cannot be empty!");
+		}
+		
+		if(password.equals(""))
+		{
+			errList.add("Password cannot be empty!");
+		}
+		
+		
+		if(lName.equals("") || lName.equals(""))
+		{
+			errList.add("Display name cannot be empty!");
+		}
+		
+		
+		if(studentDAO.DoesEmailExist(email))
+		{
+			errList.add("Username already exist!");
+		}
+		
+		if(!errList.isEmpty()) { //has some error
+			
+			request.setAttribute("errlist", errList);
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("SignUpAsStudent.jsp");
+			requestDispatcher.forward(request, response);
+	
+			return;
+		}
+	
+		//  Happy Flow success create new user
+		studentDAO.AddStudent(password, email, fName, lName, major);
+	
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("login.jsp");
+	
+		requestDispatcher.forward(request, response);
 	}
 	
 

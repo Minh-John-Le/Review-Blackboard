@@ -21,23 +21,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import DAO.SchoolDAO;
+
 /**
  * Servlet implementation class CreateSchoolServlet
  */
 @WebServlet("/addSchoolServlet")
 public class CreateSchoolServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection;
-	private ServletContext context;
-	
-	public void init(ServletConfig config)
-	{				
-		context = config.getServletContext();	
-		
-		
-		
-	}
-    
+	private SchoolDAO schoolDAO = new SchoolDAO();
   	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String sName =request.getParameter("sname");
@@ -47,17 +39,7 @@ public class CreateSchoolServlet extends HttpServlet {
 		String zipcode =request.getParameter("zipcode");
 		String clickButton = request.getParameter("Button");
 		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		
 		if(clickButton != null)
         {
@@ -65,68 +47,38 @@ public class CreateSchoolServlet extends HttpServlet {
         	{
         		RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
     			requestDispatcher.forward(request, response);
-    			try {
-					connection.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
     			return;
         	}
         }
+		
 		List<String> errList = new LinkedList<String>();
 		if(sName.equals(""))
 		{
 			errList.add("School Name cannot be empty!");
 		}
 		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			//connection = DriverManager.getConnection("jdbc:mysql://localhost/ReviewBlackboardDB", "dbuser", "dbpassword");
-			Statement statement = connection.createStatement();
-			String searchSchoolsql = "SELECT * "
-					+ "FROM School "
-					+ "WHERE sName = '" + sName + "';";
-			ResultSet resultSet = statement.executeQuery(searchSchoolsql);
-			if(resultSet.next())
-			{
-				errList.add("School already exist!");
-			}
+
+		if(schoolDAO.doesSchoolExist(sName))
+		{
+			errList.add("School already exist!");
+		}
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}	
+
 		
 		if(!errList.isEmpty()) { //has some error
 			
 			request.setAttribute("errlist", errList);
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("addSchool.jsp");
 			requestDispatcher.forward(request, response);
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+
 			return;
 		}
 		
-		try {
-		    String addschoolsql = "Insert Into school (sname, street, city, state, zipcode)\n"+ "VALUES(?,?,?,?,?);";
-		    PreparedStatement addschoolPstmt = connection.prepareStatement(addschoolsql);
-		    addschoolPstmt.setString(1, sName);
-		    addschoolPstmt.setString(2, street);
-		    addschoolPstmt.setString(3, city);
-		    addschoolPstmt.setString(4, state);
-		    addschoolPstmt.setString(5, zipcode);
-		    addschoolPstmt.executeUpdate();
-		    RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
-			requestDispatcher.forward(request, response);
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		// add school
+		schoolDAO.AddSchoolDAO(sName, street, city, state, zipcode);
+		
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+		requestDispatcher.forward(request, response);
 	
 	}
 

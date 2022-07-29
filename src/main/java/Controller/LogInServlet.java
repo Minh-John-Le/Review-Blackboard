@@ -21,6 +21,8 @@ import javax.servlet.http.HttpSession;
 
 import Beans.ProfessorUser;
 import Beans.StudentUser;
+import DAO.ProfessorDAO;
+import DAO.StudentDAO;
 
 /**
  * Servlet implementation class LoginServlet
@@ -29,6 +31,8 @@ import Beans.StudentUser;
 public class LogInServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	ServletContext context;
+	StudentDAO studentDAO = new StudentDAO();
+	ProfessorDAO professorDAO = new ProfessorDAO();
 
 	public void init(ServletConfig config)
 	{		
@@ -65,116 +69,71 @@ public class LogInServlet extends HttpServlet {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
-		try {
 			
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("homeServlet");
+		List<String> errList = new LinkedList<String>();
+		
+		if (password.equals(""))
+		{
+			errList.add("Password cannot be empty!");
+		}
+		
+		if (studentDAO.DoesStudentSuccessLogin(email, password))
+		{
+			session.setAttribute("userRole", "student");
+		}
+		else if (professorDAO.DoesProfessorSuccessLogin(email, password))
+		{
+			session.setAttribute("userRole", "professor");
+		}
+		else
+		{
+			errList.add("Username or Password is incorrect!");
+		} 
+		
+		
+		if(!errList.isEmpty()) // no error prceed to home page
+		{
+			request.setAttribute("errlist", errList);
+			requestDispatcher = request.getRequestDispatcher("login.jsp");
+			requestDispatcher.include(request, response);
+		
+			return;
+		}
 			
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
+		if(session.getAttribute("userRole").equals("student"))
+		{
 
-
-
-			Statement statement = connection.createStatement();
-			String searchStudentsql = "SELECT * \n"
-					+ "FROM Student\n"
-					+ "WHERE email = '" + email + "' and password ='" + password +"'"
-					+";";
-
-
-			ResultSet studentSearchResult = statement.executeQuery(searchStudentsql);
+			StudentUser currentStudentUser = studentDAO.getStudentUSer(email, password);
 			
-			Statement statement2 = connection.createStatement();
-			String searchProfessorsql = "SELECT * \n"
-					+ "FROM Professor\n"
-					+ "WHERE email = '" + email + "' and pw ='" + password +"'"
-					+";";
-
-
-			ResultSet professorSearchResult = statement2.executeQuery(searchProfessorsql);
+			session.setAttribute("currentStudentUser", currentStudentUser);
+			session.setAttribute("currentProfessorUser", null);
+			//session.setAttribute("name", fNameString + " " + lNameString);
+			session.setAttribute("userId", currentStudentUser.getId());
 			
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("homeServlet");
-			List<String> errList = new LinkedList<String>();
+			requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+			requestDispatcher.forward(request, response);
+		
+			return;
+		}
+		
+		if(session.getAttribute("userRole").equals("professor"))
+		{
+		
 			
-			if (password.equals(""))
-			{
-				errList.add("Password cannot be empty!");
-			}
+			ProfessorUser currentProfessorUser = professorDAO.getProfessorUser(email, password);
 			
-			if (studentSearchResult.next())
-			{
-				session.setAttribute("userRole", "student");
-			}
-			else if (professorSearchResult.next())
-			{
-				session.setAttribute("userRole", "professor");
-			}
-			else
-			{
-				errList.add("Username or Password is incorrect!");
-			} 
+			session.setAttribute("currentStudentUser", null);
+			session.setAttribute("currentProfessorUser", currentProfessorUser);
+			//session.setAttribute("name", fNameString + " " + lNameString);
+			session.setAttribute("userId", currentProfessorUser.getId());
 			
-			
-			if(!errList.isEmpty()) // no error prceed to home page
-			{
-				request.setAttribute("errlist", errList);
-				requestDispatcher = request.getRequestDispatcher("login.jsp");
-				requestDispatcher.include(request, response);
-				connection.close();
-				return;
-			}
-				
-			if(session.getAttribute("userRole").equals("student"))
-			{
-				int id = studentSearchResult.getInt("user_id");
-				String passwordString = studentSearchResult.getString("password");
-				String emailString = studentSearchResult.getString("email");
-				String fNameString = studentSearchResult.getString("fname");
-				String lNameString = studentSearchResult.getString("lname");
-				String majorString = studentSearchResult.getString("major");
-				
-
-				StudentUser currentStudentUser = new StudentUser(id, passwordString, emailString,fNameString,lNameString,majorString);
-				
-				session.setAttribute("currentStudentUser", currentStudentUser);
-				session.setAttribute("currentProfessorUser", null);
-				session.setAttribute("name", fNameString + " " + lNameString);
-				session.setAttribute("userId", currentStudentUser.getId());
-				
-				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
-				requestDispatcher.forward(request, response);
-				connection.close();
-				return;
-			}
-			
-			if(session.getAttribute("userRole").equals("professor"))
-			{
-				int idString = professorSearchResult.getInt("user_id");
-				String passwordString = professorSearchResult.getString("pw");
-				String emailString = professorSearchResult.getString("email");
-				String fNameString = professorSearchResult.getString("fname");
-				String lNameString = professorSearchResult.getString("lname");
-				String schoolString = professorSearchResult.getString("schoolName");
-				String deparmentString = professorSearchResult.getString("department");
-				
-				ProfessorUser currentProfessorUser = new ProfessorUser(idString, passwordString, emailString,fNameString,lNameString,schoolString,deparmentString);
-				
-				session.setAttribute("currentStudentUser", null);
-				session.setAttribute("currentProfessorUser", currentProfessorUser);
-				session.setAttribute("name", fNameString + " " + lNameString);
-				session.setAttribute("userId", currentProfessorUser.getId());
-				
-				requestDispatcher = request.getRequestDispatcher("homePage.jsp");
-				requestDispatcher.forward(request, response);
-				connection.close();
-				return;
-			}
-			
-			
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			requestDispatcher = request.getRequestDispatcher("homePage.jsp");
+			requestDispatcher.forward(request, response);
+	
+			return;
 		}
 	}
+	
 
 }

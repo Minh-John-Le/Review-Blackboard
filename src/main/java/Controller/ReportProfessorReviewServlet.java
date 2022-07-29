@@ -3,8 +3,6 @@ package Controller;
 import java.io.IOException;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -80,9 +78,7 @@ public class ReportProfessorReviewServlet extends HttpServlet {
 		selectedProfessor.setAvgQuality(avgQ);
 		
 		session.setAttribute("selectedProfessor", selectedProfessor);
-		LinkedList<ProfessorReview> reviewList = professorReviewDAO
-				
-				.ProfessorReviewList(Id);
+		LinkedList<ProfessorReview> reviewList = professorReviewDAO.ProfessorReviewList(Id);
 		session.setAttribute("professorReview", reviewList);
 		
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
