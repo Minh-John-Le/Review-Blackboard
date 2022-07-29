@@ -10,11 +10,8 @@ import java.util.LinkedList;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.RequestDispatcher;
-
 import Beans.Professor;
 import Beans.ProfessorUser;
-import Beans.StudentUser;
 
 public class ProfessorDAO {
 	public void AddProfessor(String pw, String email, String fname, String lname, String schoolName, String department)
@@ -335,41 +332,6 @@ public class ProfessorDAO {
 		}
 		return false;
 	}
-	/*
-	public void AddProfessor(String password, String email, String fName, String lName, String school, String department)
-	{
-		InitialContext initialContext;
-		try {
-			initialContext = new InitialContext();
-			String dbUrl = (String) initialContext.lookup("java:comp/env/dbUrl");
-			String dbUser = (String) initialContext.lookup("java:comp/env/dbUser");
-			String dbPassword = (String) initialContext.lookup("java:comp/env/dbPassword");
-			Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-		
-			String signupUser = "INSERT INTO Professor (pw, email, fname, lname, schoolName, department)"
-					+ "VALUES(?,?,?,?,?,?);";
-			
-			PreparedStatement signupUserPstmt = connection.prepareStatement(signupUser);
-			
-			signupUserPstmt.setString(1, password);
-			signupUserPstmt.setString(2, email);
-			signupUserPstmt.setString(3, fName);
-			signupUserPstmt.setString(4, lName);
-			signupUserPstmt.setString(5, school);
-			signupUserPstmt.setString(6, department);
-			
-			signupUserPstmt.executeUpdate();
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	
-	}
-	*/
+
 
 }
