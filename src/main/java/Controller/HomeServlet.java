@@ -161,6 +161,14 @@ public class HomeServlet extends HttpServlet {
 		
 	}
 	
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	
 	private LinkedList<School> SearchSchool (String schoolName)
 	{
 		LinkedList<School> schoolList = new LinkedList<School>();
