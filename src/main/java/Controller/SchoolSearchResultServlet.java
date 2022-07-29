@@ -66,7 +66,6 @@ public class SchoolSearchResultServlet extends HttpServlet {
 		
 		// Check is user click any view button
 		int index = 0;
-		System.out.println(searchSchoolList.size());
 		while(index < searchSchoolList.size())
 		{
 			String schoolName = searchSchoolList.get(index).getName();
@@ -77,7 +76,6 @@ public class SchoolSearchResultServlet extends HttpServlet {
 			{
 				session.setAttribute("selectSchoolName",schoolName);				
 				
-				System.out.println("searched School =" + schoolName);
 				RequestDispatcher rd = request.getRequestDispatcher("/collegeSearchServlet");
 				rd.forward(request, response);
 				

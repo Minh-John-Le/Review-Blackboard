@@ -25,7 +25,7 @@ public class SchoolReviewDAO {
 			String dbPassword = (String) initialContext.lookup("java:comp/env/dbPassword");
 			Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 			
-			PreparedStatement stmt = con.prepareStatement("insert into school_reviews(pub_date, text_cont, author, school_id, location, safety, quality, infrastructure) values(?,?,?,?,?,?,?,?)");
+			PreparedStatement stmt = con.prepareStatement("insert into school_reviews(pub_date, text_cont, author, school_id, location, safety, quality, from_year, to_year, infrastructure) values(?,?,?,?,?,?,?,?,?,?)");
 			stmt.setDate(1, schoolReview.getYear());
 			stmt.setString(2, schoolReview.getBody());
 			stmt.setInt(3, schoolReview.getAuthor());
@@ -33,7 +33,9 @@ public class SchoolReviewDAO {
 			stmt.setInt(5, schoolReview.getLocation());
 			stmt.setInt(6, schoolReview.getSafety());
 			stmt.setInt(7, schoolReview.getQuality());
-			stmt.setInt(8, schoolReview.getInfrastructure());
+			stmt.setInt(8, schoolReview.getAttFromYear());
+			stmt.setInt(9, schoolReview.getAttToYear());
+			stmt.setInt(10, schoolReview.getInfrastructure());
 			stmt.executeUpdate();
 		} catch (SQLException | NamingException e) {
 			e.printStackTrace();
@@ -49,14 +51,16 @@ public class SchoolReviewDAO {
 				String dbPassword = (String) initialContext.lookup("java:comp/env/dbPassword");
 				Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 
-				PreparedStatement stmt = con.prepareStatement("update school_reviews set pub_date=?, text_cont=?, location=?, safety=?, quality=?, infrastructure=? where author=?");
+				PreparedStatement stmt = con.prepareStatement("update school_reviews set pub_date=?, text_cont=?, location=?, safety=?, quality=?, infrastructure=?, from_year=?, to_year=? where author=?");
 				stmt.setDate(1, schoolReview.getYear());
 				stmt.setString(2, schoolReview.getBody());
 				stmt.setInt(3, schoolReview.getLocation());
 				stmt.setInt(4, schoolReview.getSafety());
 				stmt.setInt(5, schoolReview.getQuality());
 				stmt.setInt(6, schoolReview.getInfrastructure());
-				stmt.setInt(7, schoolReview.getAuthor());
+				stmt.setInt(7, schoolReview.getAttFromYear());
+				stmt.setInt(8, schoolReview.getAttToYear());
+				stmt.setInt(9, schoolReview.getAuthor());
 				stmt.executeUpdate();
 			} catch (SQLException | NamingException e) {
 				e.printStackTrace();
@@ -88,6 +92,8 @@ public class SchoolReviewDAO {
 				schoolReview.setLocation(rs.getInt(6));
 				schoolReview.setSafety(rs.getInt(7));
 				schoolReview.setQuality(rs.getInt(8));
+				schoolReview.setAttFromYear(rs.getInt(9));
+				schoolReview.setAttToYear(rs.getInt(10));
 				schoolReview.setInfrastructure(rs.getInt(11));
 			
 				reviews.add(schoolReview);
@@ -126,6 +132,8 @@ public class SchoolReviewDAO {
 				schoolReview.setLocation(rs.getInt(6));
 				schoolReview.setSafety(rs.getInt(7));
 				schoolReview.setQuality(rs.getInt(8));
+				schoolReview.setAttFromYear(rs.getInt(9));
+				schoolReview.setAttToYear(rs.getInt(10));
 				schoolReview.setInfrastructure(rs.getInt(11));
 			}
 			
@@ -161,6 +169,8 @@ public class SchoolReviewDAO {
 				schoolReview.setLocation(rs.getInt(6));
 				schoolReview.setSafety(rs.getInt(7));
 				schoolReview.setQuality(rs.getInt(8));
+				schoolReview.setAttFromYear(rs.getInt(9));
+				schoolReview.setAttToYear(rs.getInt(10));
 				schoolReview.setInfrastructure(rs.getInt(11));
 			}
 			
@@ -182,7 +192,7 @@ public class SchoolReviewDAO {
 
 			Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
 			PreparedStatement stmt = con.prepareStatement(
-					"select * from school_reviews where school_id=? and pub_date >= ? and pub_date <= ? and quality >= ? " + 
+					"select * from school_reviews where school_id=? and pub_date >= ? and pub_date <= ? and from_year >= ? and to_year <= ? and quality >= ? " + 
 			"and quality <= ? and safety >= ? and safety <= ? and location >= ? and location <= ? and infrastructure >= ? and infrastructure <= ?");
 			stmt.setInt(1, schoolId);
 			stmt.setInt(2, params.get(0));
@@ -195,6 +205,8 @@ public class SchoolReviewDAO {
 			stmt.setInt(9, params.get(7));
 			stmt.setInt(10, params.get(8));
 			stmt.setInt(11, params.get(9));
+			stmt.setInt(12, params.get(10));
+			stmt.setInt(13, params.get(11));
 			ResultSet rs = stmt.executeQuery();
 			
 			while (rs.next()) {
@@ -208,6 +220,8 @@ public class SchoolReviewDAO {
 				schoolReview.setLocation(rs.getInt(6));
 				schoolReview.setSafety(rs.getInt(7));
 				schoolReview.setQuality(rs.getInt(8));
+				schoolReview.setAttFromYear(rs.getInt(9));
+				schoolReview.setAttToYear(rs.getInt(10));
 				schoolReview.setInfrastructure(rs.getInt(11));
 				reviews.add(schoolReview);
 			}

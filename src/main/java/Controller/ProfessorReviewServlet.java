@@ -92,7 +92,6 @@ public class ProfessorReviewServlet extends HttpServlet {
 				String Id = String.valueOf(proReviewList.get(index).getReviewId());
 				String reply = "reply" + Id;
 				
-				System.out.println("This is reply ID " +Id);
 				if(request.getParameter(reply) != null)
 				{
 					
@@ -228,7 +227,6 @@ public class ProfessorReviewServlet extends HttpServlet {
 							+ "grade " + grade + " AND \n"
 							+ "Pyear > " + fYear + " AND Pyear < " + toYear +"\n"
 					+ "ORDER BY PR.pub_date DESC;";
-			//System.out.println(searchProfessorReviewsql);
 
 			ResultSet searchResult = statement.executeQuery(searchProfessorReviewsql);
 			

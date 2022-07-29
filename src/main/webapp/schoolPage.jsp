@@ -51,8 +51,8 @@ out.println(school.getName() + " Reviews");%></title>
     <main>
     <div class="container">
       <span class = "heading">
-      <form action="/Review_Blackboard/homePage.jsp">
-      <input type="submit" value="Review Blackboard"/>
+      <form action="homeServlet">
+      <input type="submit" value="Review Blackboard" name="Button"/>
       </form>
  	  </span>
  	  <span class="heading_right">
@@ -137,10 +137,15 @@ out.println(school.getName() + " Reviews");%></title>
       <form action="searchCollegeReviewsServlet">
       	<h3 class="search-reviews">Search for Reviews</h3>
       	<div align="left">
-        <label for="fromYear">From year:</label>
+        <label for="fromYear">Posted from year:</label>
         <input type="text" id="fromYear" name="fromYear"/>
-        <label for="toYear">To year:</label>
+        <label for="toYear">Posted to year:</label>
         <input type="text" id="toYear" name="toYear"/>
+        <br />
+        <label for="attFromYear">Attended from year:</label>
+        <input type="text" id="attFromYear" name="attFromYear"/>
+        <label for="attToYear">Attended to year:</label>
+        <input type="text" id="attToYear" name="attToYear"/>
         </div>
         <div align="left">
         <div>
@@ -227,7 +232,7 @@ out.println(school.getName() + " Reviews");%></title>
       if (ses.getAttribute("userRole").equals("student")) {
     	  out.println("<form action=\"schoolReviews\" method=\"post\">");
     	  out.println("<h3>Add a Review</h3>");
-    	  out.println("<textarea rows=\"5\" cols=\"50\" name=\"body\"> </textarea>");
+    	  out.println("<textarea rows=\"5\" cols=\"50\" name=\"body\"></textarea>");
     	  out.println("<br />");
     	  out.println("<label for=\"reviewQuality\">Quality:</label>");
     	  out.println("<select name=\"quality\" id=\"reviewQuality\">");
@@ -262,6 +267,11 @@ out.println(school.getName() + " Reviews");%></title>
     	  out.println("<option value=\"1\">1</option>");
     	  out.println("</select>");
     	  out.println("<br />");
+    	  out.println("<label for=\"attFromYear\">Attended from year:</label>");
+          out.println("<input type=\"text\" id=\"attFromYear\" name=\"attFromYear\"/>");
+          out.println("<label for=\"attToYear\">Attended to year:</label>");
+          out.println("<input type=\"text\" id=\"attToYear\" name=\"attToYear\"/>");
+    	  out.println("<br />");
     	  out.println("<input type=\"text\" name=\"year\" value=\"" + new Date(new java.util.Date().getTime()) + "\" hidden />");
     	  out.println("<br />");
     	  out.println("<input type=\"text\" name=\"schoolId\" value=\"" + school.getSchoolId() + "\" hidden />");
@@ -287,9 +297,16 @@ out.println(school.getName() + " Reviews");%></title>
 			out.println("<span class=\"tab\">");
 			out.println("<b>Infrastructure:</b> " + review.getInfrastructure());
 			out.println("</span>");
-			out.println("<span class=\"tab\">");
+			out.println("<br />");
+			out.println("<span>");
 			out.println("<b>Date posted:</b> " + review.getYear());
-			out.println("</span>");			
+			out.println("</span>");
+			out.println("<span class=\"tab\">");
+			out.println("<b>Attended from year:</b> " + review.getAttFromYear());
+			out.println("</span>");		
+			out.println("<span class=\"tab\">");
+			out.println("<b>Attended to year:</b> " + review.getAttToYear());
+			out.println("</span>");	
 			out.println("<blockquote class=\"review\">");
 			out.println(review.getBody());
 			out.println("</blockquote>");

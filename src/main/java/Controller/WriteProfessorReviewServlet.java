@@ -71,10 +71,7 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 		int professorID = professor.getUser_ID();
 		LocalDateTime today = LocalDateTime.now();
 		String todayString = today.toString();
-		
-		System.out.println("userID = " + userID);
-		System.out.println("professorID = " + professorID);
-		
+
 		LinkedList<String> errlist = new LinkedList<String>();
 		
 		if(course == null || year.equals(""))
@@ -219,10 +216,7 @@ public class WriteProfessorReviewServlet extends HttpServlet {
 			
 			session.setAttribute("selectedProfessor", selectedProfessor);
 			LinkedList<ProfessorReview> reviewList = this.ProfessorReviewList(Id);
-			System.out.println(reviewList.size());
 			session.setAttribute("professorReview", reviewList);
-			
-			
 			
 			RequestDispatcher requestDispatcher = request.getRequestDispatcher("professorReview.jsp");		
 			requestDispatcher.forward(request, response);

@@ -31,6 +31,8 @@ public class SearchCollegeReviewsServlet extends HttpServlet {
 		ArrayList<Integer> params = new ArrayList<>();
 		int fromYear = 0;
 		int toYear = Integer.MAX_VALUE;
+		int attFrom = 0;
+		int attTo = Integer.MAX_VALUE;
 		int quality = 0;
 		int qualityBelow = Integer.MAX_VALUE;
 		int safety = 0;
@@ -39,13 +41,21 @@ public class SearchCollegeReviewsServlet extends HttpServlet {
 		int locationBelow = Integer.MAX_VALUE;
 		int infrastructure = 0;
 		int infrastructureBelow = Integer.MAX_VALUE;
-		
+
 		if (request.getParameter("fromYear") != "") {
 			fromYear = Integer.parseInt(request.getParameter("fromYear"));
 		}
 		if (request.getParameter("toYear") != "") {
 			toYear = Integer.parseInt(request.getParameter("toYear"));
 		}
+		
+		if (request.getParameter("attFromYear") != "") {
+			attFrom = Integer.parseInt(request.getParameter("attFromYear"));
+		}
+		if (request.getParameter("attToYear") != "") {
+			attTo = Integer.parseInt(request.getParameter("attToYear"));
+		}
+		
 		if (request.getParameter("quality") != "") {
 		    quality = Integer.parseInt(request.getParameter("quality"));
 		}
@@ -72,6 +82,8 @@ public class SearchCollegeReviewsServlet extends HttpServlet {
 		}
 		params.add(fromYear);
 		params.add(toYear);
+		params.add(attFrom);
+		params.add(attTo);
 		params.add(quality);
 		params.add(qualityBelow);
 		params.add(safety);

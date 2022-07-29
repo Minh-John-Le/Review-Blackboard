@@ -77,7 +77,6 @@ public class SearchProfessorForSignUpServlet extends HttpServlet {
 						
 					}
 					
-					//System.out.println(professorList.size());
 					if (professorList.size() > 0)
 					{
 						session.setAttribute("searchProfessorList", professorList);
