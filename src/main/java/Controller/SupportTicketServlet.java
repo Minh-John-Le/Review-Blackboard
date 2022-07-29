@@ -1,19 +1,8 @@
 package Controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,10 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import Beans.Professor;
-import Beans.ProfessorReview;
 import Beans.ProfessorUser;
 import Beans.StudentUser;
+import DAO.SupportTicketDAO;
 
 /**
  * Servlet implementation class HomeServlet
@@ -32,13 +20,8 @@ import Beans.StudentUser;
 @WebServlet("/supportTicketServlet")
 public class SupportTicketServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ServletContext context;
+	private SupportTicketDAO supportTicketDAO = new SupportTicketDAO();
 	
-	public void init(ServletConfig config)
-	{				
-		context = config.getServletContext();		
-	}
-		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String clickButton = request.getParameter("Button");
 		
@@ -85,14 +68,14 @@ public class SupportTicketServlet extends HttpServlet {
 			if (session.getAttribute("userRole").equals("student")) {
 				StudentUser curUser = (StudentUser)session.getAttribute("currentStudentUser");
 				author = String.valueOf(curUser.getId());
-				this.StudentSupportTicket(author, supportTag, textCont);
+				supportTicketDAO.AddStudentSupportTicket(author, supportTag, textCont);
 				
 			}
 			
 			else {
 				ProfessorUser curUser = (ProfessorUser)session.getAttribute("currentProfessorUser");
 				author = String.valueOf(curUser.getId());
-				this.ProfessorSupportTicket(author, supportTag, textCont);
+				supportTicketDAO.AddProfessorSupportTicket(author, supportTag, textCont);
 			}
 		}
 			
@@ -103,73 +86,7 @@ public class SupportTicketServlet extends HttpServlet {
 		
 	}
 
-	private void StudentSupportTicket(String studentID, String supportTag, String content)
-	{
-		try {
-			
-			LocalDateTime today = LocalDateTime.now();
-			String todayString = today.toString();
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			//Statement statement = connection.createStatement();
-			String insertReportsql = "INSERT INTO StudentSupportTicket(StudentID, supportTag, Text_content, publishDate) \n"
-					+ "VALUES(?,?,?,?);";
-			
-			PreparedStatement insertReportStmt = connection.prepareStatement(insertReportsql);
-			
-			insertReportStmt.setString(1, studentID);
-			insertReportStmt.setString(2, supportTag);
-			insertReportStmt.setString(3, content);
-			insertReportStmt.setString(4, todayString);
-			
-
-			insertReportStmt.executeUpdate();
-				
-			connection.close();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
-	private void ProfessorSupportTicket(String professorID, String supportTag, String content)
-	{
-		try {
-			
-			LocalDateTime today = LocalDateTime.now();
-			String todayString = today.toString();
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			
-			Connection connection = DriverManager.getConnection(context.getInitParameter("dbUrl"),
-					context.getInitParameter("dbUser"), context.getInitParameter("dbPassword"));
-			//Statement statement = connection.createStatement();
-			String insertReportsql = "INSERT INTO ProfessorSupportTicket(ProfessorID, supportTag, Text_content, publishDate) \n"
-					+ "VALUES(?,?,?,?);";
-			
-			PreparedStatement insertReportStmt = connection.prepareStatement(insertReportsql);
-			
-			insertReportStmt.setString(1, professorID);
-			insertReportStmt.setString(2, supportTag);
-			insertReportStmt.setString(3, content);
-			insertReportStmt.setString(4, todayString);
-			
-
-			insertReportStmt.executeUpdate();
-				
-			connection.close();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 
 }

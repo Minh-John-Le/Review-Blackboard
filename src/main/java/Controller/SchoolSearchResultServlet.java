@@ -1,11 +1,6 @@
 package Controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.LinkedList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -17,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import Beans.Professor;
-import Beans.ProfessorReview;
 import Beans.School;
 
 /**
@@ -27,12 +20,7 @@ import Beans.School;
 @WebServlet("/schoolSearchResultServlet")
 public class SchoolSearchResultServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private ServletContext context;
-	
-	public void init(ServletConfig config)
-	{				
-		context = config.getServletContext();		
-	}
+
 		
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -40,6 +28,7 @@ public class SchoolSearchResultServlet extends HttpServlet {
 		String clickButton = request.getParameter("Button");
 		HttpSession session = request.getSession();
 		
+		@SuppressWarnings("unchecked")
 		LinkedList<School> searchSchoolList = (LinkedList<School>) (session.getAttribute("searchSchoolList"));
 		
 		

@@ -105,10 +105,12 @@ public class LogInServlet extends HttpServlet {
 		{
 
 			StudentUser currentStudentUser = studentDAO.getStudentUSer(email, password);
+			String fNameString = currentStudentUser.getfName();
+			String lNameString = currentStudentUser.getlName();
 			
 			session.setAttribute("currentStudentUser", currentStudentUser);
 			session.setAttribute("currentProfessorUser", null);
-			//session.setAttribute("name", fNameString + " " + lNameString);
+			session.setAttribute("name", fNameString + " " + lNameString);
 			session.setAttribute("userId", currentStudentUser.getId());
 			
 			requestDispatcher = request.getRequestDispatcher("homePage.jsp");
@@ -125,7 +127,10 @@ public class LogInServlet extends HttpServlet {
 			
 			session.setAttribute("currentStudentUser", null);
 			session.setAttribute("currentProfessorUser", currentProfessorUser);
-			//session.setAttribute("name", fNameString + " " + lNameString);
+			
+			String fNameString = currentProfessorUser.getfName();
+			String lNameString = currentProfessorUser.getlName();
+			session.setAttribute("name", fNameString + " " + lNameString);
 			session.setAttribute("userId", currentProfessorUser.getId());
 			
 			requestDispatcher = request.getRequestDispatcher("homePage.jsp");
