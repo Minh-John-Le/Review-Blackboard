@@ -44,8 +44,8 @@
 <% String name = (String)request.getAttribute("name"); %>
 <div class="container">
  <span class = "heading">
-      <form action="/Review_Blackboard/homePage.jsp">
-      <input type="submit" value="Review Blackboard"/>
+      <form action="homeServlet">
+      <input type="submit" value="Review Blackboard" name="Button"/>
       </form>
       <form action="collegeSearchServlet" method="get">
       <input type="hidden" name="school" value="<%= name %>">
